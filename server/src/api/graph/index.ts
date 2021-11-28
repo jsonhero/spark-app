@@ -1,0 +1,1 @@
+export { SparkCreateInput } from './spark.input'

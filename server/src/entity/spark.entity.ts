@@ -7,6 +7,7 @@ import {
 } from 'typeorm';
 import { Field, ObjectType } from "@nestjs/graphql";
 
+// https://codersera.com/blog/nestjs-typeorm-graphql-dataloader-tutorial-with-typescript/
 @ObjectType()
 @Entity({ name: 'spark' })
 export class Spark {
@@ -16,11 +17,11 @@ export class Spark {
   id: string;
 
   @Field()
-  @Column({ type: 'jsonb' })
+  @Column({ type: 'jsonb', default: null })
   doc: string;
 
   @Field()
-  @Column({ type: 'jsonb' })
+  @Column({ type: 'jsonb', default: null })
   tags: string;
 
   @Field()

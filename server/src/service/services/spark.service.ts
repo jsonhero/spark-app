@@ -3,6 +3,7 @@ import { Repository } from 'typeorm';
 
 import { DbConnection } from '../../db'
 import { Spark } from '../../entity'
+import { SparkCreateInput } from '../../api/graph'
 
 @Injectable()
 export class SparkService {
@@ -18,6 +19,14 @@ export class SparkService {
 
     findAll(): Promise<Spark[]> {
       return this.getRepository().find()
+    }
+
+    async create(input: SparkCreateInput): Promise<Spark> {
+      const spark = await this.getRepository().create({
+        doc: input.doc,
+      })
+
+      return spark
     }
 
 }

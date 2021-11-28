@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectConnection } from '@nestjs/typeorm';
 import { Repository, Connection, EntitySchema, ObjectType } from 'typeorm';
-
+// https://github.com/vendure-ecommerce/vendure/blob/master/packages/core/src/api/common/request-context.ts
 @Injectable()
 export class DbConnection {
   constructor(

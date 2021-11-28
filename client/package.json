@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@apollo/client": "^3.5.5",
     "@chakra-ui/icons": "^1.1.1",
     "@chakra-ui/react": "^1.7.1",
     "@emotion/react": "^11",
@@ -14,7 +15,9 @@
     "@tiptap/react": "^2.0.0-beta.70",
     "@tiptap/starter-kit": "^2.0.0-beta.117",
     "@tiptap/suggestion": "^2.0.0-beta.82",
+    "apollo-link-logger": "^2.0.0",
     "framer-motion": "^4",
+    "graphql": "^16.0.1",
     "lodash": "^4.17.21",
     "luxon": "^2.1.1",
     "mobx": "^6.3.7",
@@ -36,7 +39,8 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "generate": "graphql-codegen --config codegen.yml"
   },
   "eslintConfig": {
     "extends": [
@@ -57,6 +61,16 @@
     ]
   },
   "devDependencies": {
-    "@types/react": "^17.0.34"
+    "@graphql-codegen/cli": "2.3.0",
+    "@graphql-codegen/fragment-matcher": "^3.2.0",
+    "@graphql-codegen/introspection": "2.1.0",
+    "@graphql-codegen/near-operation-file-preset": "^2.2.2",
+    "@graphql-codegen/typescript": "2.4.1",
+    "@graphql-codegen/typescript-operations": "2.2.1",
+    "@graphql-codegen/typescript-react-apollo": "3.2.2",
+    "@types/react": "^17.0.34",
+    "add": "^2.0.6",
+    "graphql-tag": "^2.12.6",
+    "yarn": "^1.22.17"
   }
 }

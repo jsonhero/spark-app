@@ -3,13 +3,13 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { DbConnection } from './db-connection';
 
-import { Spark } from '../entity';
+// import { Spark } from '../entity';
 
 @Global()
 @Module({
   imports: [
     TypeOrmModule.forFeature([
-      Spark
+      // Spark
     ]),
   ],
   providers: [DbConnection],
