@@ -1,0 +1,62 @@
+{
+  "name": "my-tiptap-project",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "@chakra-ui/icons": "^1.1.1",
+    "@chakra-ui/react": "^1.7.1",
+    "@emotion/react": "^11",
+    "@emotion/styled": "^11",
+    "@testing-library/jest-dom": "^5.14.1",
+    "@testing-library/react": "^12.0.0",
+    "@testing-library/user-event": "^13.2.1",
+    "@tiptap/extension-placeholder": "^2.0.0-beta.44",
+    "@tiptap/react": "^2.0.0-beta.70",
+    "@tiptap/starter-kit": "^2.0.0-beta.117",
+    "@tiptap/suggestion": "^2.0.0-beta.82",
+    "framer-motion": "^4",
+    "lodash": "^4.17.21",
+    "luxon": "^2.1.1",
+    "mobx": "^6.3.7",
+    "mobx-persist-store": "^1.0.4",
+    "mobx-react": "^7.2.1",
+    "mobx-react-lite": "^3.2.2",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
+    "react-location": "^3.2.15",
+    "react-location-elements-to-routes": "^3.2.15",
+    "react-popper": "^2.2.5",
+    "react-scripts": "4.0.3",
+    "tippy.js": "^6.3.7",
+    "typescript": "^4.4.4",
+    "uuid": "^8.3.2",
+    "web-vitals": "^2.1.0"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "devDependencies": {
+    "@types/react": "^17.0.34"
+  }
+}

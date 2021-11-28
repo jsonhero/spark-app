@@ -1,0 +1,1 @@
+export { tagSuggestions } from './suggestions'
