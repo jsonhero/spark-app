@@ -1,32 +1,27 @@
 import { Injectable } from '@nestjs/common';
 import { Repository } from 'typeorm';
 
-import { DbConnection } from '../../db'
-import { Spark } from '../../entity'
-import { SparkCreateInput } from '../../api/graph'
+import { DbConnection } from '../../db';
+import { Spark } from '../../entity';
+import { SparkCreateInput } from '../../api/graph';
 
 @Injectable()
 export class SparkService {
+  constructor(private connection: DbConnection) {}
 
-    constructor(
-        private connection: DbConnection,
-    ) {}
+  private get repository(): Repository<Spark> {
+    return this.connection.getRepository(Spark);
+  }
 
+  findAll(): Promise<Spark[]> {
+    return this.repository.find();
+  }
 
-    private getRepository(): Repository<Spark> {
-      return this.connection.getRepository(Spark)
-    }
+  async create(input: SparkCreateInput): Promise<Spark> {
+    const spark = this.repository.create({
+      doc: input.doc,
+    });
 
-    findAll(): Promise<Spark[]> {
-      return this.getRepository().find()
-    }
-
-    async create(input: SparkCreateInput): Promise<Spark> {
-      const spark = await this.getRepository().create({
-        doc: input.doc,
-      })
-
-      return spark
-    }
-
+    return await this.repository.save(spark);
+  }
 }

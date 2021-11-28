@@ -3,32 +3,31 @@ import {
   PrimaryGeneratedColumn,
   CreateDateColumn,
   UpdateDateColumn,
-  Column
+  Column,
 } from 'typeorm';
-import { Field, ObjectType } from "@nestjs/graphql";
+import { Field, ObjectType } from '@nestjs/graphql';
 
 // https://codersera.com/blog/nestjs-typeorm-graphql-dataloader-tutorial-with-typescript/
 @ObjectType()
 @Entity({ name: 'spark' })
 export class Spark {
-
   @Field()
-  @PrimaryGeneratedColumn("uuid")
+  @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Field()
+  @Field({ nullable: true })
   @Column({ type: 'jsonb', default: null })
   doc: string;
 
-  @Field()
+  @Field({ nullable: true })
   @Column({ type: 'jsonb', default: null })
   tags: string;
 
   @Field()
-  @CreateDateColumn({name: 'created_at'})
+  @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
 
   @Field()
-  @UpdateDateColumn({name: 'updated_at'})
+  @UpdateDateColumn({ name: 'updated_at' })
   updatedAt: Date;
 }
