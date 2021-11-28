@@ -1,0 +1,1 @@
+export { SparkResolver } from './spark.resolver'
