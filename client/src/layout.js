@@ -9,9 +9,10 @@ import {
   useMatch,
 } from "react-location";
 
-import { Header, Sidebar, SecondarySidebar, Main, MainEditor } from './components'
+import { Header, Sidebar, Main } from './components'
+import { SparksSidebar, MainEditor } from './containers'
 import { Home, Search } from './routes'
-import { tagPopoverStore, sparksStore, globalStore } from './store'
+import { tagPopoverStore, sparksStore, globalStore } from './core/store'
 
 const location = new ReactLocation();
 
@@ -30,7 +31,7 @@ export const Layout = () => {
           ]}
         >
           <Sidebar tagPopoverStore={tagPopoverStore} globalStore={globalStore} />
-          <SecondarySidebar tagPopoverStore={tagPopoverStore} globalStore={globalStore} sparksStore={sparksStore} />
+          <SparksSidebar />
           <Outlet />
           {/* <Main tagPopoverStore={tagPopoverStore} globalStore={globalStore}>
             <Outlet />

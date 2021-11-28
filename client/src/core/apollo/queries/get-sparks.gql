@@ -1,4 +1,4 @@
-query getSpark {
+query getSparks {
   sparks {
     id
     doc

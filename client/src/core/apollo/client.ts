@@ -10,7 +10,7 @@ import { onError } from "@apollo/client/link/error";
 // @ts-ignore
 import apolloLogger from "apollo-link-logger";
 
-import generatedIntrospection from "../../__generated__/possible-graph-types";
+import generatedIntrospection from "./__generated__/fragment-matcher";
 
 enableExperimentalFragmentVariables();
 

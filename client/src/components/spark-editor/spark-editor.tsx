@@ -1,8 +1,8 @@
-import React from 'react'
-import { Box, Flex, Button, SimpleGrid } from '@chakra-ui/react'
-import { useEditor, EditorContent } from "@tiptap/react";
+import React, { useEffect } from 'react'
+import { Box, Flex, Button, SimpleGrid, BoxProps } from '@chakra-ui/react'
+import { useEditor, EditorContent, EditorOptions } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit"
-import Placeholder from '@tiptap/extension-placeholder'
+import Placeholder, { PlaceholderOptions } from '@tiptap/extension-placeholder'
 import Document from '@tiptap/extension-document'
 import Paragraph from '@tiptap/extension-paragraph'
 import Heading from '@tiptap/extension-heading'
@@ -10,12 +10,12 @@ import { Node } from 'prosemirror-model';
 import Text from '@tiptap/extension-text'
 import { Extension } from '@tiptap/core'
 import { toJS } from 'mobx';
-
 import _, { isEmpty } from 'lodash'
 
 import { Tag } from './nodes'
 import { tagSuggestions } from './utils'
-import { findTags, extractTextFromJSONDoc } from '../../utils'
+import { findTags, extractTextFromJSONDoc } from '@/utils'
+import { Spark } from '@operations'
 
 
 const CustomDocument = Document.extend({
@@ -30,10 +30,13 @@ const EscapeBlurExtension = Extension.create({
   }
 })
 
-export const SparkEditor = ({ isNew, addSpark, updateSpark, existingSpark, ...rest }) => {
+export interface SparkEditorProps extends BoxProps {
+  editorOptions?: Partial<EditorOptions>
+  spark?: Spark | null 
+}
 
-  console.log(toJS(existingSpark), 'spark')
-
+const SparkEditorComponent: React.FC<SparkEditorProps> = ({ editorOptions = {}, spark = null, ...rest  }) => {
+  console.log(spark, 'spooky')
   const editor = useEditor({
     extensions: [
         CustomDocument,
@@ -48,6 +51,8 @@ export const SparkEditor = ({ isNew, addSpark, updateSpark, existingSpark, ...re
             if (node.type.name === 'heading') {
               return 'Untitled'
             }
+
+            return ''
           },
         }),
         Tag.configure({
@@ -58,25 +63,24 @@ export const SparkEditor = ({ isNew, addSpark, updateSpark, existingSpark, ...re
         }),
         EscapeBlurExtension
     ],
-    content: existingSpark ? existingSpark.doc : '',
-    onBlur: ({ editor }) => {
-      const tags = findTags(editor.state.doc).map((node) => node.attrs.id)
-      if (isNew) {
-        if (!editor.isEmpty) {
-          addSpark(editor.getJSON(), tags)
-        }
-        editor.commands.clearContent()
-      } else {
-        updateSpark(existingSpark.id, editor.getJSON(), tags)
-      }
-    },
-  }, [existingSpark]);
+    content: spark && spark.doc ? JSON.parse(spark.doc) : '',
+    ...editorOptions,
+  }, [editorOptions]);
+
+  // useEffect(() => {
+  //   console.log(editor, 'editor')
+  //   editor?.commands.focus()
+  // }, [spark])
 
   return (
     <Box height="min-content" onClick={() => {
-      editor.commands.focus()
+      editor?.commands.focus()
     }} {...rest}>
       <EditorContent editor={editor} />
     </Box>
   );
 }
+
+export const SparkEditor = React.memo(SparkEditorComponent, (prevProps, nextProps) => {
+  return _.isEqual(prevProps.spark, nextProps.spark)
+})

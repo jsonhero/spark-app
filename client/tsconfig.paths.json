@@ -1,0 +1,9 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@operations": ["./src/core/apollo/__generated__/schema-and-operations"],
+      "@/*": ["./src/*"]
+    }
+  }
+}

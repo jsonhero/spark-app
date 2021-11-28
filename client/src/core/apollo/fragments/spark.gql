@@ -1,0 +1,7 @@
+fragment GenericSpark on Spark {
+  id
+  doc
+  tags
+  createdAt
+  updatedAt 
+}

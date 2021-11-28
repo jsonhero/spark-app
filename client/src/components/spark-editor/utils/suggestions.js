@@ -1,4 +1,4 @@
-import { tagPopoverStore } from '../../../store'
+import { tagPopoverStore } from '../../../core/store'
 
 export const tagSuggestions = {
   render: () => {

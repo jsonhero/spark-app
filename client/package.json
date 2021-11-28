@@ -36,7 +36,7 @@
     "web-vitals": "^2.1.0"
   },
   "scripts": {
-    "start": "react-scripts start",
+    "start": "craco start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
@@ -61,6 +61,7 @@
     ]
   },
   "devDependencies": {
+    "@craco/craco": "^6.4.2",
     "@graphql-codegen/cli": "2.3.0",
     "@graphql-codegen/fragment-matcher": "^3.2.0",
     "@graphql-codegen/introspection": "2.1.0",
@@ -68,9 +69,14 @@
     "@graphql-codegen/typescript": "2.4.1",
     "@graphql-codegen/typescript-operations": "2.2.1",
     "@graphql-codegen/typescript-react-apollo": "3.2.2",
+    "@types/luxon": "^2.0.7",
     "@types/react": "^17.0.34",
     "add": "^2.0.6",
     "graphql-tag": "^2.12.6",
+    "react-app-rewire-alias": "^1.1.5",
+    "tsconfig-paths-webpack-plugin": "^3.5.2",
+    "webpack-bundle-analyzer": "^4.5.0",
+    "webpackbar": "^5.0.2",
     "yarn": "^1.22.17"
   }
 }

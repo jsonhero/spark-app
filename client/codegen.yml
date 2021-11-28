@@ -7,22 +7,16 @@ overwrite: true
 schema: "http://localhost:3000/graphql"
 documents: "src/**/*.gql"
 generates:
-  src/__generated__/global-graph-types.ts:
+  src/core/apollo/__generated__/schema-and-operations.ts:
     plugins:
       - typescript
-  src/__generated__/possible-graph-types.ts:
+      - typescript-operations
+      - typescript-react-apollo
+  src/core/apollo/__generated__/fragment-matcher.ts:
     plugins:
       - fragment-matcher
     config:
       useExplicitTyping: true
-  src/:
-    preset: near-operation-file
-    presetConfig:
-      extension: .generated.ts
-      baseTypesPath: /__generated__/global-graph-types.ts
-    plugins:
-      - typescript-operations
-      - typescript-react-apollo
   ./graphql.schema.json:
     plugins:
       - "introspection"

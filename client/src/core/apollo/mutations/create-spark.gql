@@ -1,0 +1,5 @@
+mutation createSpark($input: SparkCreateInput!) {
+  createSpark(input: $input) {
+    ...GenericSpark
+  }
+}

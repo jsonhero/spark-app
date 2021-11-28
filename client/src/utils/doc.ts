@@ -15,10 +15,8 @@ export const findTags = (doc: Node) => {
 export const extractTextFromJSONDoc = (doc: any, charLimit = 200) => {
   let text = ''
   let stop = false
-  console.log(toJS(doc), 'doc')
   function recurseNodes(node: any) {
     if (stop) return;
-    // console.log(toJS(node), 'node')
     if (node.type === 'text') {
 
       const words = node.text.split(' ')

@@ -24,4 +24,10 @@ export class SparkService {
 
     return await this.repository.save(spark);
   }
+
+  async delete(id: string) {
+    return this.repository.delete({
+      id,
+    });
+  }
 }
