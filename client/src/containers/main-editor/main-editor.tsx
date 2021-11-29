@@ -1,14 +1,10 @@
-import React, { useCallback, useMemo, useContext, useState } from 'react'
-import { Box, Flex, Button, SimpleGrid } from '@chakra-ui/react'
+import React, { useState } from 'react'
+import { Box, Flex }  from '@chakra-ui/react'
 import { observer } from "mobx-react-lite"
-import { toJS } from 'mobx';
 import { useApolloClient } from '@apollo/client'
 
 import { SparkEditor } from '@/components'
-import { useCreateSparkMutation, useDeleteSparkMutation, GetSparksDocument, Spark, GetSparksQuery } from '@operations'
-import { EditorOptions } from '@tiptap/react';
-
-import { findTags, extractTextFromJSONDoc } from '@/utils'
+import { useCreateSparkMutation, useDeleteSparkMutation, GetSparksDocument, Spark } from '@operations'
 import { useEventEmitter } from '@/core/hooks'
 import { AppEventType } from '@/core/events'
 import { SparkEditorStore } from '@/core/store';
@@ -79,9 +75,7 @@ export const MainEditor = observer(() => {
     
   }, [sparkEditor])
 
-  const setEditor = (editor: SparkEditorStore) => {
-    console.log(editor, 'dedz')
-    
+  const setEditor = (editor: SparkEditorStore) => {    
     setSparkEditor(editor)
   }
 

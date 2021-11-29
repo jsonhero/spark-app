@@ -41,7 +41,7 @@ export const SparksSidebar = () => {
                   <Box position="absolute" top="10px" right="15px">
                     <CloseIcon boxSize="10px" color="gray_3" onClick={() => {}} />
                   </Box>
-                  <Flex flexDirection="column" justify="space-between" p="12px" width="100%" _hover={{
+                  <Flex flexDirection="column" minHeight="88px" justify="space-between" p="12px" width="100%" _hover={{
                     cursor: 'pointer'
                   }} onClick={() => {}}>
                     <Text fontWeight="bold" fontSize="sm">{extractTitleFromJSONDoc(parsedDoc)}</Text>
