@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useContext } from 'react'
+import React, { useCallback, useMemo, useContext, useState } from 'react'
 import { Box, Flex, Button, SimpleGrid } from '@chakra-ui/react'
 import { observer } from "mobx-react-lite"
 import { toJS } from 'mobx';
@@ -9,43 +9,30 @@ import { useCreateSparkMutation, useDeleteSparkMutation, GetSparksDocument, Spar
 import { EditorOptions } from '@tiptap/react';
 
 import { findTags, extractTextFromJSONDoc } from '@/utils'
-import { MainEditorContext } from '@/core/store'
-
+import { useEventEmitter } from '@/core/hooks'
+import { AppEventType } from '@/core/events'
+import { SparkEditorStore } from '@/core/store';
 
 export const MainEditor = observer(() => {
 
+  const [sparkEditor, setSparkEditor] = useState<SparkEditorStore | null>(null)
+
+  const { useListener } = useEventEmitter()
+
   const client = useApolloClient()
 
-  const mainEditor = useContext(MainEditorContext)
-  const [createSparkMutation, {}] = useCreateSparkMutation({
-    onCompleted(completedData) {
-      client.cache.updateQuery({ query: GetSparksDocument }, (data) => ({
-        sparks: [completedData.createSpark, ...data.sparks]
-      }))
-      mainEditor.setCurrentlyEditingSpark(completedData.createSpark.id)
-    }
-  })
+  const [createSparkMutation, {}] = useCreateSparkMutation()
 
-  const [deleteSparkMutation, {}] = useDeleteSparkMutation({
-    onCompleted() {
-      client.cache.updateQuery({ query: GetSparksDocument }, (data) => ({
-        sparks: data.sparks.filter((spark: Spark) => spark.id !== mainEditor.currentlyEditingSparkId)
-      }))
-      mainEditor.clearCurrentlyEditingSpark()
-    }
-  })
+  const [deleteSparkMutation, {}] = useDeleteSparkMutation()
 
-  const currentSpark: Spark | null | undefined = useMemo(() => {
-    const data: GetSparksQuery | null = client.cache.readQuery({ query: GetSparksDocument })
-    return data && data.sparks.find((spark: Spark) => spark.id === mainEditor.currentlyEditingSparkId)
-  }, [mainEditor.currentlyEditingSparkId])
-  console.log(currentSpark, 'sparky')
+  useListener(AppEventType.updateEditor, (event) => {
+    const transaction = event.transaction
+    const editor = event.editorStore.editor
 
-  const editorOptions: Partial<EditorOptions> = useMemo(() => ({
-    onUpdate: ({ editor, transaction }) => {
+
+    if (editor) {
       const isPreviouslyEmpty = transaction.before.textContent.length === 0
       const isEmpty = transaction.doc.textContent.length === 0
-      console.log(currentSpark, 'spark??')
       if (isPreviouslyEmpty && !isEmpty) {
         const docString: string = JSON.stringify(editor.getJSON())
         
@@ -54,29 +41,49 @@ export const MainEditor = observer(() => {
             input: {
               doc: docString
             }
+          },
+          onCompleted: (completedData) => {
+            client.cache.updateQuery({ query: GetSparksDocument }, (data) => ({
+              sparks: [completedData.createSpark, ...data.sparks]
+            }))
+            if (sparkEditor) {
+              sparkEditor.setCurrentlyEditingSpark(completedData.createSpark)
+            }
           }
         })
-      } else if (!isPreviouslyEmpty && isEmpty && mainEditor.currentlyEditingSparkId) {
+      } else if (!isPreviouslyEmpty && isEmpty && sparkEditor?.currentlyEditingSpark?.id) {
         deleteSparkMutation({
           variables: {
-            id: mainEditor.currentlyEditingSparkId
+            id: sparkEditor?.currentlyEditingSpark?.id
+          },
+          onCompleted() {
+            if (sparkEditor) {
+              client.cache.updateQuery({ query: GetSparksDocument }, (data) => ({
+                sparks: data.sparks.filter((spark: Spark) => spark.id !== sparkEditor.currentlyEditingSpark?.id)
+              }))
+              sparkEditor.clearCurrentlyEditingSpark()
+            }
           }
         })
-      } else if (currentSpark) {
-        console.log("Modify!", client.cache.identify(currentSpark))
+      } else if (sparkEditor?.currentlyEditingSpark) {
         client.cache.modify({
-          id: client.cache.identify(currentSpark),
+          id: client.cache.identify(sparkEditor?.currentlyEditingSpark),
           fields: {
             doc(cachedDoc) {
-              console.log('cached??')
               return JSON.stringify(editor.getJSON())
             }
           }
         })
       }
-      
-    },
-  }), [mainEditor.currentlyEditingSparkId, currentSpark])
+    }
+    
+  }, [sparkEditor])
+
+  const setEditor = (editor: SparkEditorStore) => {
+    console.log(editor, 'dedz')
+    
+    setSparkEditor(editor)
+  }
 
   return (
     <Box width="100%" bg="gray_0">
@@ -85,7 +92,7 @@ export const MainEditor = observer(() => {
       </Box>
       <Flex justify="center" width="100%" height="300px">
         <Box width="65%">
-          <SparkEditor editorOptions={editorOptions} spark={currentSpark} width="auto" minHeight="200px" />
+          <SparkEditor onRegisterEditor={setEditor} width="auto" minHeight="200px" />
         </Box>
       </Flex>
       </Box>

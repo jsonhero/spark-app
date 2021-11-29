@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useContext } from 'react'
 import { Box, Flex, Button, SimpleGrid, BoxProps } from '@chakra-ui/react'
 import { useEditor, EditorContent, EditorOptions } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit"
@@ -16,6 +16,9 @@ import { Tag } from './nodes'
 import { tagSuggestions } from './utils'
 import { findTags, extractTextFromJSONDoc } from '@/utils'
 import { Spark } from '@operations'
+import { createSparkEditorContext, SparkEditorStore } from '@/core/store'
+import { useEventEmitter } from '@/core/hooks'
+import { AppEventType } from '@/core/events'
 
 
 const CustomDocument = Document.extend({
@@ -31,12 +34,16 @@ const EscapeBlurExtension = Extension.create({
 })
 
 export interface SparkEditorProps extends BoxProps {
-  editorOptions?: Partial<EditorOptions>
   spark?: Spark | null 
+  onRegisterEditor?: (editor: SparkEditorStore) => void
 }
 
-const SparkEditorComponent: React.FC<SparkEditorProps> = ({ editorOptions = {}, spark = null, ...rest  }) => {
-  console.log(spark, 'spooky')
+const SparkEditorComponent: React.FC<SparkEditorProps> = ({ spark = null, onRegisterEditor, ...rest  }) => {
+
+  const sparkEditor = useContext(createSparkEditorContext(spark))
+  const { emit } = useEventEmitter()
+
+
   const editor = useEditor({
     extensions: [
         CustomDocument,
@@ -63,14 +70,20 @@ const SparkEditorComponent: React.FC<SparkEditorProps> = ({ editorOptions = {}, 
         }),
         EscapeBlurExtension
     ],
-    content: spark && spark.doc ? JSON.parse(spark.doc) : '',
-    ...editorOptions,
-  }, [editorOptions]);
-
-  // useEffect(() => {
-  //   console.log(editor, 'editor')
-  //   editor?.commands.focus()
-  // }, [spark])
+    content: '',
+    onUpdate({ transaction }) {
+      emit(AppEventType.updateEditor, {
+        editorStore: sparkEditor,
+        transaction: transaction
+      })
+    },
+    onCreate({ editor }) {
+      sparkEditor.setEditor(editor)
+      if (onRegisterEditor) {
+        onRegisterEditor(sparkEditor)
+      }
+    }
+  });
 
   return (
     <Box height="min-content" onClick={() => {
@@ -82,5 +95,5 @@ const SparkEditorComponent: React.FC<SparkEditorProps> = ({ editorOptions = {}, 
 }
 
 export const SparkEditor = React.memo(SparkEditorComponent, (prevProps, nextProps) => {
-  return _.isEqual(prevProps.spark, nextProps.spark)
+  return _.isEqual(prevProps, nextProps)
 })
