@@ -25,8 +25,25 @@ export class SparkService {
     return await this.repository.save(spark);
   }
 
+  async update(id: string, doc: string): Promise<Spark> {
+    const spark = await this.repository.findOne({
+      where: { id },
+    });
+
+    return this.repository.save({
+      ...spark,
+      doc,
+    });
+  }
+
   async delete(id: string) {
     return this.repository.delete({
+      id,
+    });
+  }
+
+  async findById(id: string) {
+    return this.repository.findOne({
       id,
     });
   }

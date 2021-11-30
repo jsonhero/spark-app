@@ -1,4 +1,4 @@
-import React, { useEffect, useContext } from 'react'
+import React, { useEffect, useContext, useState } from 'react'
 import { Box, Flex, Button, SimpleGrid, BoxProps } from '@chakra-ui/react'
 import { useEditor, EditorContent, EditorOptions } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit"
@@ -16,9 +16,10 @@ import { Tag } from './nodes'
 import { tagSuggestions } from './utils'
 import { findTags, extractTextFromJSONDoc } from '@/utils'
 import { Spark } from '@operations'
-import { createSparkEditorContext, SparkEditorStore } from '@/core/store'
+import { SparkEditorStore } from '@/core/store'
 import { useEventEmitter } from '@/core/hooks'
 import { AppEventType } from '@/core/events'
+import { observer } from 'mobx-react';
 
 
 const CustomDocument = Document.extend({
@@ -34,15 +35,13 @@ const EscapeBlurExtension = Extension.create({
 })
 
 export interface SparkEditorProps extends BoxProps {
-  spark?: Spark | null 
-  onRegisterEditor?: (editor: SparkEditorStore) => void
+  onRegisterEditor?: (editor: SparkEditorStore) => void,
 }
 
-const SparkEditorComponent: React.FC<SparkEditorProps> = ({ spark = null, onRegisterEditor, ...rest  }) => {
+const SparkEditorComponent: React.FC<SparkEditorProps> = observer(({ onRegisterEditor, ...rest  }) => {
 
-  const sparkEditor = useContext(createSparkEditorContext(spark))
+  const [sparkEditor] = useState(() => new SparkEditorStore(null))
   const { emit } = useEventEmitter()
-
 
   const editor = useEditor({
     extensions: [
@@ -70,7 +69,7 @@ const SparkEditorComponent: React.FC<SparkEditorProps> = ({ spark = null, onRegi
         }),
         EscapeBlurExtension
     ],
-    content: '',
+    content: sparkEditor.currentlyEditingSpark && sparkEditor.currentlyEditingSpark.doc ? JSON.parse(sparkEditor.currentlyEditingSpark.doc) : '',
     onUpdate({ transaction }) {
       emit(AppEventType.updateEditor, {
         editorStore: sparkEditor,
@@ -82,8 +81,11 @@ const SparkEditorComponent: React.FC<SparkEditorProps> = ({ spark = null, onRegi
       if (onRegisterEditor) {
         onRegisterEditor(sparkEditor)
       }
+      if (sparkEditor.isNew) {
+        editor.commands.focus('end')
+      }
     }
-  });
+  }, [sparkEditor.currentlyEditingSpark?.id]);
 
   return (
     <Box height="min-content" onClick={() => {
@@ -92,7 +94,7 @@ const SparkEditorComponent: React.FC<SparkEditorProps> = ({ spark = null, onRegi
       <EditorContent editor={editor} />
     </Box>
   );
-}
+})
 
 export const SparkEditor = React.memo(SparkEditorComponent, (prevProps, nextProps) => {
   return _.isEqual(prevProps, nextProps)

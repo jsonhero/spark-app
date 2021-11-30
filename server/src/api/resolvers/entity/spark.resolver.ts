@@ -1,10 +1,23 @@
-import { Args, Mutation, Query, Resolver, ID } from '@nestjs/graphql';
+import {
+  Args,
+  Mutation,
+  Query,
+  Resolver,
+  ID,
+  ResolveField,
+  Parent,
+} from '@nestjs/graphql';
 
-import { SparkService } from '../../../service';
-import { Spark } from '../../../entity';
-import { SparkCreateInput, DeleteSparkPayload } from '../../graph';
+import { SparkService } from '@service';
+import { Spark } from '@entity';
+import {
+  SparkCreateInput,
+  DeleteSparkPayload,
+  UpdateSparkPayload,
+} from '../../graph';
+import { toGlobalId, fromGlobalId } from '@graph/utils';
 
-@Resolver()
+@Resolver(() => Spark)
 export class SparkResolver {
   constructor(private readonly sparkService: SparkService) {}
 
@@ -22,9 +35,28 @@ export class SparkResolver {
   async deleteSpark(
     @Args({ name: 'id', type: () => ID }) id: string,
   ): Promise<DeleteSparkPayload> {
-    await this.sparkService.delete(id);
+    const resolvedGlobalId = fromGlobalId(id);
+
+    await this.sparkService.delete(resolvedGlobalId.id);
     return {
       id,
     };
+  }
+
+  @Mutation(() => UpdateSparkPayload)
+  async updateSpark(
+    @Args({ name: 'id', type: () => ID }) id: string,
+    @Args({ name: 'doc', type: () => String }) doc: string,
+  ): Promise<UpdateSparkPayload> {
+    const resolvedGlobalId = fromGlobalId(id);
+
+    const spark = await this.sparkService.update(resolvedGlobalId.id, doc);
+
+    return { spark };
+  }
+
+  @ResolveField()
+  id(@Parent() spark: Spark): string {
+    return toGlobalId(Spark.name, spark.id);
   }
 }

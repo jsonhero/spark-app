@@ -1,9 +1,5 @@
 query getSparks {
   sparks {
-    id
-    doc
-    tags
-    createdAt
-    updatedAt
+    ...GenericSpark
   }
 }

@@ -1,0 +1,7 @@
+query getSparkNode($id: ID!) {
+  node(id: $id) {
+    ...on Spark {
+      ...GenericSpark
+    }
+  }
+}

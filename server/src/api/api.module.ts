@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common';
 
-import { ServiceModule } from '../service';
-import { SparkResolver } from './resolvers';
+import { ServiceModule } from '@service';
+import { SparkResolver, NodeResolver } from '@resolvers';
 
-const resolvers = [SparkResolver];
+const resolvers = [SparkResolver, NodeResolver];
 
 @Module({
   imports: [ServiceModule],

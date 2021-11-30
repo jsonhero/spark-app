@@ -4,6 +4,7 @@ import StrictEventEmitter from 'strict-event-emitter-types';
 // import { Editor } from '@tiptap/core'
 import { Transaction } from 'prosemirror-state'
 import { SparkEditorStore } from '@/core/store'
+import { Spark } from '@operations'
 
 interface AppEvent {}
 
@@ -12,11 +13,16 @@ export interface SparkEditorUpdateEvent extends AppEvent {
   transaction: Transaction;
 }
 
+export interface SparkEditorSwitchEvent extends AppEvent {
+  spark: Spark
+}
+
 export type ListenerType<T> = [T] extends [(...args: infer U) => any] ? U : [T] extends [void] ? [] : [T];
 
 export enum AppEventType {
   updateEditor = 'updateEditor',
-  clearEditor = 'clearEditor'
+  clearEditor = 'clearEditor',
+  switchEditor = 'switchEditor'
 }
 
 type AppEventTypeKeys = keyof typeof AppEventType;
@@ -25,6 +31,7 @@ type AppEventTypeKeyFields = {[key in AppEventTypeKeys]:AppEvent}
 export interface AppEvents extends AppEventTypeKeyFields {
   updateEditor: (event: SparkEditorUpdateEvent) => void; 
   clearEditor: (event: AppEvent) => void
+  switchEditor: (event: SparkEditorSwitchEvent) => void;
 }
 
 export type AppEmitter = StrictEventEmitter<EventEmitter, AppEvents>

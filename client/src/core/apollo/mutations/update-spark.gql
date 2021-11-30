@@ -1,0 +1,7 @@
+mutation updateSpark($id: ID!, $doc: String!) {
+  updateSpark(id: $id, doc: $doc) {
+    spark {
+      ...GenericSpark
+    }
+  }
+}

@@ -1,9 +1,17 @@
 
       export type PossibleTypesResultData = {
-  "possibleTypes": {}
+  "possibleTypes": {
+    "Node": [
+      "Spark"
+    ]
+  }
 };
       const result: PossibleTypesResultData = {
-  "possibleTypes": {}
+  "possibleTypes": {
+    "Node": [
+      "Spark"
+    ]
+  }
 };
       export default result;
     

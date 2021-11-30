@@ -1,17 +1,36 @@
-import React from 'react'
+import React, { useCallback } from 'react'
 import { Box, Flex, Button, Text, Input, VStack, StackDivider } from '@chakra-ui/react'
 import { CloseIcon } from '@chakra-ui/icons'
 import { DateTime } from 'luxon'
 
 import { extractTextFromJSONDoc, extractTitleFromJSONDoc } from '@/utils'
-import { useGetSparksQuery } from '@operations'
+import { useGetSparksQuery, useGetSparkNodeLazyQuery } from '@operations'
+import { useEventEmitter } from '@/core/hooks'
+import { AppEventType } from '@/core/events'
 
 export const SparksSidebar = () => {
+  const { emit } = useEventEmitter()
+
   const { data, loading } = useGetSparksQuery()
+  const [getSparkNode, {}] = useGetSparkNodeLazyQuery({
+    onCompleted(data) {
+      if (data.node?.__typename === 'Spark') {
+        emit(AppEventType.switchEditor, {
+          spark: data.node
+        })
+      }
+    }
+  })
+
+  const onClickSpark = useCallback(async (sparkId) => {
+    await getSparkNode({
+      variables: {
+        id: sparkId
+      },
+    })
+  }, [])
+
   if (loading) { return null }
-
-  
-
 
   return (
     <Box height="100%" minWidth="300px" width="300px" bg="#FDFDFD" borderRight="1px solid" borderColor="gray_2">
@@ -43,7 +62,7 @@ export const SparksSidebar = () => {
                   </Box>
                   <Flex flexDirection="column" minHeight="88px" justify="space-between" p="12px" width="100%" _hover={{
                     cursor: 'pointer'
-                  }} onClick={() => {}}>
+                  }} onClick={() => onClickSpark(spark.id)}>
                     <Text fontWeight="bold" fontSize="sm">{extractTitleFromJSONDoc(parsedDoc)}</Text>
                     <Text fontSize="sm">{extractTextFromJSONDoc(parsedDoc, 40)}</Text>
                     <Text mt="xxsm" fontSize="xsm" color="gray_3">{DateTime.fromISO(spark.updatedAt).toLocaleString(DateTime.DATETIME_MED)}</Text>

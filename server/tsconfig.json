@@ -16,6 +16,14 @@
     "noImplicitAny": false,
     "strictBindCallApply": false,
     "forceConsistentCasingInFileNames": false,
-    "noFallthroughCasesInSwitch": false
+    "noFallthroughCasesInSwitch": false,
+    "paths": {
+      "@graph": ["src/api/graph/index.ts"],
+      "@graph/*": ["src/api/graph/*"],
+      "@entity": ["src/entity/"],
+      "@service": ["src/service/"],
+      "@resolvers": ["src/api/resolvers"]
+
+    }
   }
 }

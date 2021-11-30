@@ -5,13 +5,17 @@ import {
   UpdateDateColumn,
   Column,
 } from 'typeorm';
-import { Field, ObjectType } from '@nestjs/graphql';
+import { Field, ID, ObjectType } from '@nestjs/graphql';
+
+import { Node } from '../api/graph';
 
 // https://codersera.com/blog/nestjs-typeorm-graphql-dataloader-tutorial-with-typescript/
-@ObjectType()
+@ObjectType({
+  implements: Node,
+})
 @Entity({ name: 'spark' })
-export class Spark {
-  @Field()
+export class Spark implements Node {
+  @Field(() => ID)
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
