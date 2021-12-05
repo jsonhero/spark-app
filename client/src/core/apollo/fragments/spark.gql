@@ -1,7 +1,10 @@
 fragment GenericSpark on Spark {
   id
   doc
-  tags
+  tags {
+    id
+    name
+  }
   createdAt
   updatedAt 
 }

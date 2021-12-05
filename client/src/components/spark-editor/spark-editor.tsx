@@ -16,7 +16,7 @@ import { Tag } from './nodes'
 import { tagSuggestions } from './utils'
 import { findTags, extractTextFromJSONDoc } from '@/utils'
 import { Spark } from '@operations'
-import { SparkEditorStore } from '@/core/store'
+import { SparkEditorStore, globalStore } from '@/core/store'
 import { useEventEmitter } from '@/core/hooks'
 import { AppEventType } from '@/core/events'
 import { observer } from 'mobx-react';
@@ -42,6 +42,14 @@ const SparkEditorComponent: React.FC<SparkEditorProps> = observer(({ onRegisterE
 
   const [sparkEditor] = useState(() => new SparkEditorStore(null))
   const { emit } = useEventEmitter()
+
+  useEffect(() => {
+    globalStore.addActiveEditor(sparkEditor)
+    
+    return () => {
+      globalStore.removeActiveEditor(sparkEditor.id)
+    }
+  }, [])
 
   const editor = useEditor({
     extensions: [
@@ -75,6 +83,10 @@ const SparkEditorComponent: React.FC<SparkEditorProps> = observer(({ onRegisterE
         editorStore: sparkEditor,
         transaction: transaction
       })
+
+      const tagNodes = findTags(transaction.doc)
+      const tags = tagNodes.map((node) => node.attrs.id)
+      sparkEditor.setTags(_.uniq(tags))
     },
     onCreate({ editor }) {
       sparkEditor.setEditor(editor)
@@ -84,7 +96,7 @@ const SparkEditorComponent: React.FC<SparkEditorProps> = observer(({ onRegisterE
       if (sparkEditor.isNew) {
         editor.commands.focus('end')
       }
-    }
+    },
   }, [sparkEditor.currentlyEditingSpark?.id]);
 
   return (

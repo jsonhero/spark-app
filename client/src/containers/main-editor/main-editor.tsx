@@ -1,11 +1,12 @@
-import React, { useState } from 'react'
+import React, { useState, useCallback } from 'react'
 import { Box, Flex }  from '@chakra-ui/react'
 import { observer } from "mobx-react-lite"
 import { useApolloClient } from '@apollo/client'
+import _ from 'lodash'
 
 import { SparkEditor } from '@/components'
 import { useCreateSparkMutation, useDeleteSparkMutation, useUpdateSparkMutation, GetSparksDocument, Spark } from '@operations'
-import { useEventEmitter } from '@/core/hooks'
+import { useEventEmitter, useThrottle, useDeleteSpark } from '@/core/hooks'
 import { AppEventType } from '@/core/events'
 import { SparkEditorStore } from '@/core/store';
 
@@ -19,11 +20,31 @@ export const MainEditor = observer(() => {
 
   const [createSparkMutation, {}] = useCreateSparkMutation()
 
-  const [deleteSparkMutation, {}] = useDeleteSparkMutation()
+  const [onDeleteSpark, {}] = useDeleteSpark()
 
-  const [updateSparkMutation, {}] = useUpdateSparkMutation({
+  const [updateSparkMutation, { loading: isSavingEditor,  }] = useUpdateSparkMutation({
     
   })
+
+  const saveEditor = useCallback((docJson) => {
+    console.log("Attempting to save...")
+    if (sparkEditor?.currentlyEditingSpark) {
+      updateSparkMutation({
+        variables: {
+          id: sparkEditor.currentlyEditingSpark.id,
+          doc: JSON.stringify(docJson)
+        }
+      })
+    }
+  }, [sparkEditor])
+
+
+  const saveEditorThrottled = useThrottle(saveEditor, 2000)
+
+
+
+
+  // const saveEditor = _.throttle(unthrottledSaveEditor, 2000)
 
   useListener(AppEventType.updateEditor, (event) => {
     const transaction = event.transaction
@@ -51,38 +72,21 @@ export const MainEditor = observer(() => {
           }
         })
       } else if (!isPreviouslyEmpty && isEmpty && sparkEditor?.currentlyEditingSpark?.id) {
-        deleteSparkMutation({
-          variables: {
-            id: sparkEditor?.currentlyEditingSpark?.id
-          },
-          onCompleted() {
-            if (sparkEditor) {
-              client.cache.updateQuery({ query: GetSparksDocument }, (data) => ({
-                sparks: data.sparks.filter((spark: Spark) => spark.id !== sparkEditor.currentlyEditingSpark?.id)
-              }))
-              sparkEditor.clearCurrentlyEditingSpark()
+        onDeleteSpark(sparkEditor?.currentlyEditingSpark?.id)
+      } else if (sparkEditor?.currentlyEditingSpark) {
+        client.cache.modify({
+          id: client.cache.identify(sparkEditor?.currentlyEditingSpark),
+          fields: {
+            doc(cachedDoc) {
+              return JSON.stringify(editor.getJSON())
             }
           }
         })
-      } else if (sparkEditor?.currentlyEditingSpark) {
-        // client.cache.modify({
-        //   id: client.cache.identify(sparkEditor?.currentlyEditingSpark),
-        //   fields: {
-        //     doc(cachedDoc) {
-        //       return JSON.stringify(editor.getJSON())
-        //     }
-        //   }
-        // })
-        updateSparkMutation({
-          variables: {
-            id: sparkEditor.currentlyEditingSpark.id,
-            doc: JSON.stringify(editor.getJSON())
-          }
-        })
+        saveEditorThrottled(editor.getJSON())
       }
     }
     
-  }, [sparkEditor])
+  }, [sparkEditor, saveEditor])
 
   useListener(AppEventType.switchEditor, (event) => {
     sparkEditor?.setCurrentlyEditingSpark(event.spark, false)
@@ -92,10 +96,14 @@ export const MainEditor = observer(() => {
     setSparkEditor(editor)
   }
 
-  return (
-    <Box width="100%" bg="gray_0">
-      <Box mt="120px">
+  // console.log(isSavingEditor, 'saving??')
 
+  return (
+    <Box width="100%" bg="gray_0" position="relative">
+      <Box position="absolute" top="20px" right="150px">
+        {isSavingEditor ? 'Saving...'  : ''}
+      </Box>
+      <Box mt="120px">
       </Box>
       <Flex justify="center" width="100%" height="300px">
         <Box width="65%">

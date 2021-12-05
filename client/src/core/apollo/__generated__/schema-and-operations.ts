@@ -71,7 +71,7 @@ export type Spark = Node & {
   createdAt: Scalars['DateTime'];
   doc?: Maybe<Scalars['String']>;
   id: Scalars['ID'];
-  tags?: Maybe<Scalars['String']>;
+  tags: Array<Tag>;
   updatedAt: Scalars['DateTime'];
 };
 
@@ -79,19 +79,27 @@ export type SparkCreateInput = {
   doc: Scalars['String'];
 };
 
+export type Tag = Node & {
+  __typename?: 'Tag';
+  createdAt: Scalars['DateTime'];
+  id: Scalars['ID'];
+  name: Scalars['String'];
+  updatedAt: Scalars['DateTime'];
+};
+
 export type UpdateSparkPayload = {
   __typename?: 'UpdateSparkPayload';
   spark: Spark;
 };
 
-export type GenericSparkFragment = { __typename?: 'Spark', id: string, doc?: string | null | undefined, tags?: string | null | undefined, createdAt: any, updatedAt: any };
+export type GenericSparkFragment = { __typename?: 'Spark', id: string, doc?: string | null | undefined, createdAt: any, updatedAt: any, tags: Array<{ __typename?: 'Tag', id: string, name: string }> };
 
 export type CreateSparkMutationVariables = Exact<{
   input: SparkCreateInput;
 }>;
 
 
-export type CreateSparkMutation = { __typename?: 'Mutation', createSpark: { __typename?: 'Spark', id: string, doc?: string | null | undefined, tags?: string | null | undefined, createdAt: any, updatedAt: any } };
+export type CreateSparkMutation = { __typename?: 'Mutation', createSpark: { __typename?: 'Spark', id: string, doc?: string | null | undefined, createdAt: any, updatedAt: any, tags: Array<{ __typename?: 'Tag', id: string, name: string }> } };
 
 export type DeleteSparkMutationVariables = Exact<{
   id: Scalars['ID'];
@@ -106,25 +114,28 @@ export type UpdateSparkMutationVariables = Exact<{
 }>;
 
 
-export type UpdateSparkMutation = { __typename?: 'Mutation', updateSpark: { __typename?: 'UpdateSparkPayload', spark: { __typename?: 'Spark', id: string, doc?: string | null | undefined, tags?: string | null | undefined, createdAt: any, updatedAt: any } } };
+export type UpdateSparkMutation = { __typename?: 'Mutation', updateSpark: { __typename?: 'UpdateSparkPayload', spark: { __typename?: 'Spark', id: string, doc?: string | null | undefined, createdAt: any, updatedAt: any, tags: Array<{ __typename?: 'Tag', id: string, name: string }> } } };
 
 export type GetSparkNodeQueryVariables = Exact<{
   id: Scalars['ID'];
 }>;
 
 
-export type GetSparkNodeQuery = { __typename?: 'Query', node?: { __typename?: 'Spark', id: string, doc?: string | null | undefined, tags?: string | null | undefined, createdAt: any, updatedAt: any } | null | undefined };
+export type GetSparkNodeQuery = { __typename?: 'Query', node?: { __typename?: 'Spark', id: string, doc?: string | null | undefined, createdAt: any, updatedAt: any, tags: Array<{ __typename?: 'Tag', id: string, name: string }> } | { __typename?: 'Tag' } | null | undefined };
 
 export type GetSparksQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetSparksQuery = { __typename?: 'Query', sparks: Array<{ __typename?: 'Spark', id: string, doc?: string | null | undefined, tags?: string | null | undefined, createdAt: any, updatedAt: any }> };
+export type GetSparksQuery = { __typename?: 'Query', sparks: Array<{ __typename?: 'Spark', id: string, doc?: string | null | undefined, createdAt: any, updatedAt: any, tags: Array<{ __typename?: 'Tag', id: string, name: string }> }> };
 
 export const GenericSparkFragmentDoc = gql`
     fragment GenericSpark on Spark {
   id
   doc
-  tags
+  tags {
+    id
+    name
+  }
   createdAt
   updatedAt
 }

@@ -4,9 +4,7 @@ import { Repository, Connection, EntitySchema, ObjectType } from 'typeorm';
 // https://github.com/vendure-ecommerce/vendure/blob/master/packages/core/src/api/common/request-context.ts
 @Injectable()
 export class DbConnection {
-  constructor(
-    @InjectConnection() private connection: Connection,
-) {}
+  constructor(@InjectConnection() private connection: Connection) {}
 
   /**
    * @description
@@ -15,7 +13,7 @@ export class DbConnection {
    * transactions.
    */
   get rawConnection(): Connection {
-      return this.connection;
+    return this.connection;
   }
 
   /**
@@ -24,11 +22,13 @@ export class DbConnection {
    * be aware of any existing transaction. Therefore calling this method without supplying a RequestContext
    * is discouraged without a deliberate reason.
    */
-  getRepository<Entity>(target: ObjectType<Entity> | EntitySchema<Entity> | string): Repository<Entity>;
+  getRepository<Entity>(
+    target: ObjectType<Entity> | EntitySchema<Entity> | string,
+  ): Repository<Entity>;
 
   getRepository<Entity>(
     target: ObjectType<Entity> | EntitySchema<Entity> | string,
   ): Repository<Entity> {
-    return this.connection.getRepository(target)
+    return this.connection.getRepository(target);
   }
 }

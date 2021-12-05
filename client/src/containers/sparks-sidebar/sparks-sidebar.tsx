@@ -4,8 +4,8 @@ import { CloseIcon } from '@chakra-ui/icons'
 import { DateTime } from 'luxon'
 
 import { extractTextFromJSONDoc, extractTitleFromJSONDoc } from '@/utils'
-import { useGetSparksQuery, useGetSparkNodeLazyQuery } from '@operations'
-import { useEventEmitter } from '@/core/hooks'
+import { useGetSparksQuery, useGetSparkNodeLazyQuery, useDeleteSparkMutation } from '@operations'
+import { useEventEmitter, useDeleteSpark } from '@/core/hooks'
 import { AppEventType } from '@/core/events'
 
 export const SparksSidebar = () => {
@@ -30,10 +30,12 @@ export const SparksSidebar = () => {
     })
   }, [])
 
+  const [onDeleteSpark, {}] = useDeleteSpark()
+
   if (loading) { return null }
 
   return (
-    <Box height="100%" minWidth="300px" width="300px" bg="#FDFDFD" borderRight="1px solid" borderColor="gray_2">
+    <Box height="100vh" minWidth="300px" width="300px" bg="#FDFDFD" borderRight="1px solid" borderColor="gray_2">
       <Box p="md" borderBottom="1px solid" borderColor="gray_2">
         <Box>
           <Text fontWeight="bold">All</Text>
@@ -47,7 +49,7 @@ export const SparksSidebar = () => {
       </Box>
       <Box height="20px" bg="gray_1" borderBottom="1px solid" borderColor="gray_2">
       </Box>
-      <Box>
+      <Box overflow="auto" height="calc(100% - 200px)">
         <VStack
           spacing="0px"
           divider={<StackDivider borderColor="gray_2" />}
@@ -56,9 +58,9 @@ export const SparksSidebar = () => {
             data?.sparks.map((spark) => {
               const parsedDoc: any = spark.doc && JSON.parse(spark.doc)
               return (
-                <Box key={spark.id} position="relative" width="100%" minHeight="88px">
+                <Box key={spark.id} position="relative" width="100%" minHeight="88px" cursor="pointer">
                   <Box position="absolute" top="10px" right="15px">
-                    <CloseIcon boxSize="10px" color="gray_3" onClick={() => {}} />
+                    <CloseIcon boxSize="10px" color="gray_3" onClick={() => onDeleteSpark(spark.id)} />
                   </Box>
                   <Flex flexDirection="column" minHeight="88px" justify="space-between" p="12px" width="100%" _hover={{
                     cursor: 'pointer'

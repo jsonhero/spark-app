@@ -14,7 +14,9 @@ export class SparkService {
   }
 
   findAll(): Promise<Spark[]> {
-    return this.repository.find();
+    return this.repository.find({
+      relations: ['tags'],
+    });
   }
 
   async create(input: SparkCreateInput): Promise<Spark> {

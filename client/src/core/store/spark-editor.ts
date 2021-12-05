@@ -1,16 +1,20 @@
 import { makeAutoObservable } from "mobx"
 import { Editor } from '@tiptap/core'
-import { Spark } from '@operations'
+import {GenericSparkFragment } from '@operations'
+import { uniqueId } from "lodash";
 
-type PossibleSpark = Spark | null | undefined
+type PossibleSpark = GenericSparkFragment | null | undefined
 
 export class SparkEditorStore {
+  id: string;
   editor: Editor | null = null;
   currentlyEditingSpark: PossibleSpark = null
   isNew: boolean = true
+  tags: string[] = []
 
   constructor(spark: PossibleSpark) {
     makeAutoObservable(this)
+    this.id = uniqueId()
     this.currentlyEditingSpark = spark
   }
 
@@ -18,7 +22,7 @@ export class SparkEditorStore {
     this.editor = editor
   }
 
-  setCurrentlyEditingSpark(spark: Spark, isNew = false) {
+  setCurrentlyEditingSpark(spark: PossibleSpark, isNew = false) {
     this.currentlyEditingSpark = spark
     this.isNew = isNew
   }
@@ -29,5 +33,9 @@ export class SparkEditorStore {
 
   get isCurrentlyEditingSpark(): boolean {
     return this.currentlyEditingSpark !== null
+  }
+
+  setTags(tags: string[]) {
+    this.tags = tags;
   }
 }

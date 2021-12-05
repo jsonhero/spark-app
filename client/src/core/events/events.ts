@@ -4,7 +4,7 @@ import StrictEventEmitter from 'strict-event-emitter-types';
 // import { Editor } from '@tiptap/core'
 import { Transaction } from 'prosemirror-state'
 import { SparkEditorStore } from '@/core/store'
-import { Spark } from '@operations'
+import { GenericSparkFragment } from '@operations'
 
 interface AppEvent {}
 
@@ -14,7 +14,7 @@ export interface SparkEditorUpdateEvent extends AppEvent {
 }
 
 export interface SparkEditorSwitchEvent extends AppEvent {
-  spark: Spark
+  spark: GenericSparkFragment
 }
 
 export type ListenerType<T> = [T] extends [(...args: infer U) => any] ? U : [T] extends [void] ? [] : [T];

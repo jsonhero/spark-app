@@ -9,7 +9,7 @@ import {
 } from '@nestjs/graphql';
 
 import { SparkService } from '@service';
-import { Spark } from '@entity';
+import { Spark, Tag } from '@entity';
 import {
   SparkCreateInput,
   DeleteSparkPayload,
@@ -23,7 +23,8 @@ export class SparkResolver {
 
   @Query(() => [Spark])
   public async sparks(): Promise<Spark[]> {
-    return this.sparkService.findAll();
+    const sparks = await this.sparkService.findAll();
+    return sparks;
   }
 
   @Mutation(() => Spark)
@@ -58,5 +59,10 @@ export class SparkResolver {
   @ResolveField()
   id(@Parent() spark: Spark): string {
     return toGlobalId(Spark.name, spark.id);
+  }
+
+  @ResolveField()
+  tags(@Parent() spark: Spark): Tag[] {
+    return spark.tags || [];
   }
 }
