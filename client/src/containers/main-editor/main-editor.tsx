@@ -12,6 +12,8 @@ import { SparkEditorStore } from '@/core/store';
 
 export const MainEditor = observer(() => {
 
+  const [isSaving, setSaving] = useState(false)
+
   const [sparkEditor, setSparkEditor] = useState<SparkEditorStore | null>(null)
 
   const { useListener } = useEventEmitter()
@@ -26,6 +28,7 @@ export const MainEditor = observer(() => {
     
   })
 
+
   const saveEditor = useCallback((docJson) => {
     console.log("Attempting to save...")
     if (sparkEditor?.currentlyEditingSpark) {
@@ -35,6 +38,7 @@ export const MainEditor = observer(() => {
           doc: JSON.stringify(docJson)
         }
       })
+      console.log(docJson)
     }
   }, [sparkEditor])
 
@@ -50,7 +54,7 @@ export const MainEditor = observer(() => {
     const transaction = event.transaction
     const editor = event.editorStore.editor
 
-
+    console.log('updating??')
     if (editor) {
       const isPreviouslyEmpty = transaction.before.textContent.length === 0
       const isEmpty = transaction.doc.textContent.length === 0
@@ -86,7 +90,7 @@ export const MainEditor = observer(() => {
       }
     }
     
-  }, [sparkEditor, saveEditor])
+  }, [])
 
   useListener(AppEventType.switchEditor, (event) => {
     sparkEditor?.setCurrentlyEditingSpark(event.spark, false)

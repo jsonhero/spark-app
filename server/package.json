@@ -26,6 +26,7 @@
     "@nestjs/graphql": "^9.1.2",
     "@nestjs/platform-express": "^8.0.0",
     "@nestjs/typeorm": "^8.0.2",
+    "@tiptap/core": "^2.0.0-beta.149",
     "apollo-server-express": "^3.5.0",
     "graphql": "^15",
     "knex": "^0.95.14",

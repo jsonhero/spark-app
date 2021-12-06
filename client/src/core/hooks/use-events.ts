@@ -24,7 +24,8 @@ export function useEventEmitter() {
       useEffect(() => {
         em.addListener(type, listener)
         return () => {
-          em.removeListener(type, listener)
+          console.log("removing listener")
+          // em.removeListener(type, listener)
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
       }, [em, listener, type, ...deps])

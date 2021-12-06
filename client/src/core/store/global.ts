@@ -35,7 +35,6 @@ class Global {
     this.activeEditors = this.activeEditors.filter((editor) => editor.id !== editorId)
   }
 
-
 }
 
 

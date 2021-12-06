@@ -25,7 +25,7 @@ export const Layout = () => {
         <Router
           location={location}
           routes={[
-            { path: '/', element: <MainEditor sparksStore={sparksStore} globalStore={globalStore} /> }
+            { path: '/', element: <MainEditor /> }
             // { path: "/", element: <Home sparksStore={sparksStore} /> },
             // { path: "/search", element: <Search sparksStore={sparksStore} globalStore={globalStore} /> },
           ]}
