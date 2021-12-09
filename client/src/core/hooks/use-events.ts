@@ -1,4 +1,4 @@
-import { useEffect, useContext, useCallback, DependencyList } from 'react'
+import { useEffect, useContext, useCallback, DependencyList, useRef } from 'react'
 
 import { AppEvents, ListenerType } from '../events'
 import { AppEventEmitterContext } from '../contexts'
@@ -14,21 +14,36 @@ function useEmit() {
 
 export function useEventEmitter() {
   const emit = useEmit()
+
+  // https://usehooks.com/useEventListener/
   return {
     useListener: <E extends keyof AppEvents>(
       type: E,
       listener: (...args: ListenerType<AppEvents[E]>) => void,
       deps: DependencyList = [],
     ) => {
-      const em = useContext(AppEventEmitterContext)
+      const savedListener = useRef();
+      // Update ref.current value if handler changes.
+      // This allows our effect below to always get latest handler ...
+      // ... without us needing to pass it in effect deps array ...
+      // ... and potentially cause effect to re-run every render.
       useEffect(() => {
-        em.addListener(type, listener)
+        // @ts-ignore
+        savedListener.current = listener;
+      }, [listener]);
+
+      const em = useContext(AppEventEmitterContext)
+      useEffect(() => {        
+
+        // @ts-ignore
+        const eventListener = (...args: ListenerType<AppEvents[E]>) => savedListener.current(...args);
+
+        em.addListener(type, eventListener)
         return () => {
-          console.log("removing listener")
-          // em.removeListener(type, listener)
+          em.removeListener(type, eventListener)
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-      }, [em, listener, type, ...deps])
+      }, [em, type])
     },
     emit,
   }

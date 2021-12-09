@@ -79,8 +79,6 @@ const SparkEditorComponent: React.FC<SparkEditorProps> = observer(({ onRegisterE
     ],
     content: sparkEditor.currentlyEditingSpark && sparkEditor.currentlyEditingSpark.doc ? JSON.parse(sparkEditor.currentlyEditingSpark.doc) : '',
     onUpdate({ transaction }) {
-
-      console.log('le update')
       emit(AppEventType.updateEditor, {
         editorStore: sparkEditor,
         transaction: transaction
@@ -99,6 +97,13 @@ const SparkEditorComponent: React.FC<SparkEditorProps> = observer(({ onRegisterE
         editor.commands.focus('end')
       }
     },
+    onBlur() {
+      sparkEditor.setActive(false)
+    },
+    onFocus() {
+      console.log('is focusing')
+      sparkEditor.setActive(true)
+    }
   }, [sparkEditor.currentlyEditingSpark?.id]);
 
   return (

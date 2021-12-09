@@ -49,12 +49,12 @@ export const MainEditor = observer(() => {
 
 
   // const saveEditor = _.throttle(unthrottledSaveEditor, 2000)
+  
 
   useListener(AppEventType.updateEditor, (event) => {
     const transaction = event.transaction
     const editor = event.editorStore.editor
 
-    console.log('updating??')
     if (editor) {
       const isPreviouslyEmpty = transaction.before.textContent.length === 0
       const isEmpty = transaction.doc.textContent.length === 0
@@ -90,7 +90,7 @@ export const MainEditor = observer(() => {
       }
     }
     
-  }, [])
+  })
 
   useListener(AppEventType.switchEditor, (event) => {
     sparkEditor?.setCurrentlyEditingSpark(event.spark, false)
@@ -99,8 +99,6 @@ export const MainEditor = observer(() => {
   const setEditor = (editor: SparkEditorStore) => {    
     setSparkEditor(editor)
   }
-
-  // console.log(isSavingEditor, 'saving??')
 
   return (
     <Box width="100%" bg="gray_0" position="relative">

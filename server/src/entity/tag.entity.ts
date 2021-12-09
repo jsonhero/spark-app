@@ -4,8 +4,9 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   Column,
-  JoinTable,
   ManyToMany,
+  Unique,
+  JoinTable,
 } from 'typeorm';
 import { Field, ID, ObjectType } from '@nestjs/graphql';
 
@@ -16,6 +17,7 @@ import { Spark } from './spark.entity';
   implements: Node,
 })
 @Entity({ name: 'tag' })
+@Unique(['name'])
 export class Tag implements Node {
   @Field(() => ID)
   @PrimaryGeneratedColumn('uuid')
@@ -34,7 +36,19 @@ export class Tag implements Node {
   updatedAt: Date;
 
   @Field(() => [Spark])
-  @ManyToMany(() => Spark)
-  @JoinTable()
+  @ManyToMany(() => Spark, (spark) => spark.tags, {
+    onDelete: 'CASCADE',
+  })
+  @JoinTable({
+    name: 'spark_x_tag',
+    joinColumn: {
+      name: 'tag_id',
+      referencedColumnName: 'id',
+    },
+    inverseJoinColumn: {
+      name: 'spark_id',
+      referencedColumnName: 'id',
+    },
+  })
   sparks: Spark[];
 }

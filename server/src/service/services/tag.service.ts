@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { Repository } from 'typeorm';
 
 import { DbConnection } from '../../db';
-import { Tag } from '@entity';
+import { Spark, Tag, Spark_X_Tag } from '@entity';
 import { CreateTagInput, AddTagToSparkInput } from '../../api/graph';
 import { SparkService } from './spark.service';
 
@@ -22,18 +22,23 @@ export class TagService {
   }
 
   async create(input: CreateTagInput) {
-    const sparks = [];
-    if (input.sparkId) {
-      const sparkToAdd = await this.sparkService.findById(input.sparkId);
-      sparks.push(sparkToAdd);
-    }
-
     const tagToCreate = this.repository.create({
       name: input.name,
-      sparks,
     });
 
-    return this.repository.save(tagToCreate);
+    const tag = await this.repository.save(tagToCreate);
+
+    await this.repository
+      .createQueryBuilder()
+      .insert()
+      .into(Spark_X_Tag)
+      .values({
+        spark_id: input.sparkId,
+        tag_id: tag.id,
+      })
+      .execute();
+
+    return tag;
   }
 
   async addTagToSpark(input: AddTagToSparkInput) {

@@ -17,6 +17,26 @@ export type Scalars = {
   DateTime: any;
 };
 
+export type AddTagToSparkInput = {
+  sparkId: Scalars['ID'];
+  tagId: Scalars['ID'];
+};
+
+export type AddTagToSparkPayload = {
+  __typename?: 'AddTagToSparkPayload';
+  addedTag: Tag;
+};
+
+export type CreateTagInput = {
+  name: Scalars['String'];
+  sparkId?: InputMaybe<Scalars['ID']>;
+};
+
+export type CreateTagPayload = {
+  __typename?: 'CreateTagPayload';
+  createdTag: Tag;
+};
+
 export type DeleteSparkPayload = {
   __typename?: 'DeleteSparkPayload';
   id: Scalars['String'];
@@ -24,14 +44,26 @@ export type DeleteSparkPayload = {
 
 export type Mutation = {
   __typename?: 'Mutation';
+  addTagToSpark: AddTagToSparkPayload;
   createSpark: Spark;
+  createTag: CreateTagPayload;
   deleteSpark: DeleteSparkPayload;
   updateSpark: UpdateSparkPayload;
 };
 
 
+export type MutationAddTagToSparkArgs = {
+  input: AddTagToSparkInput;
+};
+
+
 export type MutationCreateSparkArgs = {
   input: SparkCreateInput;
+};
+
+
+export type MutationCreateTagArgs = {
+  input: CreateTagInput;
 };
 
 
@@ -54,6 +86,7 @@ export type Query = {
   node?: Maybe<Node>;
   nodes: Array<Node>;
   sparks: Array<Spark>;
+  tags: Array<Tag>;
 };
 
 
@@ -84,6 +117,7 @@ export type Tag = Node & {
   createdAt: Scalars['DateTime'];
   id: Scalars['ID'];
   name: Scalars['String'];
+  sparks: Array<Spark>;
   updatedAt: Scalars['DateTime'];
 };
 
@@ -94,12 +128,21 @@ export type UpdateSparkPayload = {
 
 export type GenericSparkFragment = { __typename?: 'Spark', id: string, doc?: string | null | undefined, createdAt: any, updatedAt: any, tags: Array<{ __typename?: 'Tag', id: string, name: string }> };
 
+export type GenericTagFragment = { __typename?: 'Tag', id: string, name: string };
+
 export type CreateSparkMutationVariables = Exact<{
   input: SparkCreateInput;
 }>;
 
 
 export type CreateSparkMutation = { __typename?: 'Mutation', createSpark: { __typename?: 'Spark', id: string, doc?: string | null | undefined, createdAt: any, updatedAt: any, tags: Array<{ __typename?: 'Tag', id: string, name: string }> } };
+
+export type CreateTagMutationVariables = Exact<{
+  input: CreateTagInput;
+}>;
+
+
+export type CreateTagMutation = { __typename?: 'Mutation', createTag: { __typename?: 'CreateTagPayload', createdTag: { __typename?: 'Tag', id: string, name: string } } };
 
 export type DeleteSparkMutationVariables = Exact<{
   id: Scalars['ID'];
@@ -140,6 +183,12 @@ export const GenericSparkFragmentDoc = gql`
   updatedAt
 }
     `;
+export const GenericTagFragmentDoc = gql`
+    fragment GenericTag on Tag {
+  id
+  name
+}
+    `;
 export const CreateSparkDocument = gql`
     mutation createSpark($input: SparkCreateInput!) {
   createSpark(input: $input) {
@@ -173,6 +222,41 @@ export function useCreateSparkMutation(baseOptions?: Apollo.MutationHookOptions<
 export type CreateSparkMutationHookResult = ReturnType<typeof useCreateSparkMutation>;
 export type CreateSparkMutationResult = Apollo.MutationResult<CreateSparkMutation>;
 export type CreateSparkMutationOptions = Apollo.BaseMutationOptions<CreateSparkMutation, CreateSparkMutationVariables>;
+export const CreateTagDocument = gql`
+    mutation createTag($input: CreateTagInput!) {
+  createTag(input: $input) {
+    createdTag {
+      ...GenericTag
+    }
+  }
+}
+    ${GenericTagFragmentDoc}`;
+export type CreateTagMutationFn = Apollo.MutationFunction<CreateTagMutation, CreateTagMutationVariables>;
+
+/**
+ * __useCreateTagMutation__
+ *
+ * To run a mutation, you first call `useCreateTagMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateTagMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createTagMutation, { data, loading, error }] = useCreateTagMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useCreateTagMutation(baseOptions?: Apollo.MutationHookOptions<CreateTagMutation, CreateTagMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateTagMutation, CreateTagMutationVariables>(CreateTagDocument, options);
+      }
+export type CreateTagMutationHookResult = ReturnType<typeof useCreateTagMutation>;
+export type CreateTagMutationResult = Apollo.MutationResult<CreateTagMutation>;
+export type CreateTagMutationOptions = Apollo.BaseMutationOptions<CreateTagMutation, CreateTagMutationVariables>;
 export const DeleteSparkDocument = gql`
     mutation deleteSpark($id: ID!) {
   deleteSpark(id: $id) {

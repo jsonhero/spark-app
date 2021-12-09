@@ -4,6 +4,7 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   Column,
+  OneToMany,
   ManyToMany,
   JoinTable,
 } from 'typeorm';
@@ -12,6 +13,7 @@ import { Field, ID, ObjectType } from '@nestjs/graphql';
 import { Node } from '../api/graph';
 
 import { Tag } from './tag.entity';
+
 // https://codersera.com/blog/nestjs-typeorm-graphql-dataloader-tutorial-with-typescript/
 @ObjectType({
   implements: Node,
@@ -35,7 +37,19 @@ export class Spark implements Node {
   updatedAt: Date;
 
   @Field(() => [Tag])
-  @ManyToMany(() => Tag)
-  @JoinTable()
+  @ManyToMany(() => Tag, (tag) => tag.sparks, {
+    onDelete: 'CASCADE',
+  })
+  @JoinTable({
+    name: 'spark_x_tag',
+    joinColumn: {
+      name: 'spark_id',
+      referencedColumnName: 'id',
+    },
+    inverseJoinColumn: {
+      name: 'tag_id',
+      referencedColumnName: 'id',
+    },
+  })
   tags: Tag[];
 }

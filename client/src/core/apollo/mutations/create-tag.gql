@@ -1,0 +1,7 @@
+mutation createTag($input: CreateTagInput!) {
+  createTag(input: $input) {
+    createdTag {
+      ...GenericTag     
+    }
+  }
+}

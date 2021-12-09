@@ -1,9 +1,12 @@
 module.exports = {
   client: {
-    excludes: ['src/**/*.gql'], // array of glob patterns
+    excludes: ['**/__generated__/**/*'],
     service: {
-      name: "api-app",
-      url: "http://localhost:3000/graphql"
-    },
+      name: 'backend',
+      url: 'http://localhost:3000/graphql',
+      // optional headers
+      // optional disable SSL validation check
+      skipSSLValidation: true
+    }
   }
 };

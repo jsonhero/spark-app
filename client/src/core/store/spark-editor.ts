@@ -11,6 +11,7 @@ export class SparkEditorStore {
   currentlyEditingSpark: PossibleSpark = null
   isNew: boolean = true
   tags: string[] = []
+  isActive: boolean = false;
 
   constructor(spark: PossibleSpark) {
     makeAutoObservable(this)
@@ -37,5 +38,9 @@ export class SparkEditorStore {
 
   setTags(tags: string[]) {
     this.tags = tags;
+  }
+
+  setActive(isActive: boolean) {
+    this.isActive = isActive;
   }
 }

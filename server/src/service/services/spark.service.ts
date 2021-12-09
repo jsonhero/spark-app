@@ -13,10 +13,12 @@ export class SparkService {
     return this.connection.getRepository(Spark);
   }
 
-  findAll(): Promise<Spark[]> {
-    return this.repository.find({
+  async findAll(): Promise<Spark[]> {
+    const sparks = await this.repository.find({
       relations: ['tags'],
     });
+    console.log(sparks, 'sparks');
+    return sparks;
   }
 
   async create(input: SparkCreateInput): Promise<Spark> {
