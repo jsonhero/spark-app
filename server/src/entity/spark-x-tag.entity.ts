@@ -9,7 +9,6 @@ import {
 
 import { Tag } from './tag.entity';
 import { Spark } from './spark.entity';
-// https://codersera.com/blog/nestjs-typeorm-graphql-dataloader-tutorial-with-typescript/
 
 @Entity({ name: 'spark_x_tag' })
 export class Spark_X_Tag {

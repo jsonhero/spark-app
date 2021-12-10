@@ -101,7 +101,6 @@ const SparkEditorComponent: React.FC<SparkEditorProps> = observer(({ onRegisterE
       sparkEditor.setActive(false)
     },
     onFocus() {
-      console.log('is focusing')
       sparkEditor.setActive(true)
     }
   }, [sparkEditor.currentlyEditingSpark?.id]);

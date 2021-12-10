@@ -4,6 +4,7 @@ import { Flex, List, ListItem } from '@chakra-ui/react'
 import { toJS } from 'mobx'
 import { useCreateTagMutation } from '@operations'
 import { globalStore } from '@/core/store'
+import { useApolloClient } from '@apollo/client'
 
 export const TagPopover = ({ tagPopoverStore }) => {
   const [popperElement, setPopperElement] = useState(null);
@@ -17,12 +18,13 @@ export const TagPopover = ({ tagPopoverStore }) => {
     placement: 'bottom-start',
   });
 
+  const client = useApolloClient()
+
   const [createTagMutation, {}] = useCreateTagMutation()
 
   const query = tagPopoverStore.props.query
 
   const activeEditor = globalStore.activeEditors.find((editor) => editor.isActive)
-  console.log(toJS(globalStore.activeEditors), 'active')
 
   const onCreateTag = useCallback(() => {
     createTagMutation({
@@ -31,6 +33,16 @@ export const TagPopover = ({ tagPopoverStore }) => {
           name: query,
           sparkId: activeEditor ? activeEditor.currentlyEditingSpark.id : null,
         }
+      },
+      onCompleted({ createTag }) {
+        client.cache.modify({
+          id: client.cache.identify(activeEditor.currentlyEditingSpark),
+          fields: {
+            tags(cachedTags) {
+              return [...cachedTags, createTag.createdTag]
+            }
+          }
+        })
       }
     })
   }, [activeEditor, query])

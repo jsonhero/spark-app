@@ -36,6 +36,7 @@ export class Spark implements Node {
   @UpdateDateColumn({ name: 'updated_at' })
   updatedAt: Date;
 
+  // https://github.com/typeorm/typeorm/issues/1224
   @Field(() => [Tag])
   @ManyToMany(() => Tag, (tag) => tag.sparks, {
     onDelete: 'CASCADE',

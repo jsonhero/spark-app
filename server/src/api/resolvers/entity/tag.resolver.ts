@@ -9,7 +9,7 @@ import {
 } from '@nestjs/graphql';
 
 import { TagService } from '@service';
-import { Tag } from '@entity';
+import { Tag, Spark } from '@entity';
 import {
   CreateTagPayload,
   CreateTagInput,
@@ -55,5 +55,11 @@ export class TagResolver {
   @ResolveField()
   id(@Parent() tag: Tag): string {
     return toGlobalId(Tag.name, tag.id);
+  }
+
+  @ResolveField()
+  sparks(@Parent() tag: Tag): Spark[] {
+    // TODO: Implement retrieve sparks by tag id
+    return [];
   }
 }

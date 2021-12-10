@@ -1,12 +1,13 @@
 import React, { useState, useCallback } from 'react'
 import { Box, Flex }  from '@chakra-ui/react'
 import { observer } from "mobx-react-lite"
+import { toJS } from 'mobx'
 import { useApolloClient } from '@apollo/client'
 import _ from 'lodash'
 
-import { SparkEditor } from '@/components'
+import { SparkEditor, Tag } from '@/components'
 import { useCreateSparkMutation, useDeleteSparkMutation, useUpdateSparkMutation, GetSparksDocument, Spark } from '@operations'
-import { useEventEmitter, useThrottle, useDeleteSpark } from '@/core/hooks'
+import { useEventEmitter, useThrottle, useDeleteSpark, useSpark } from '@/core/hooks'
 import { AppEventType } from '@/core/events'
 import { SparkEditorStore } from '@/core/store';
 
@@ -28,6 +29,8 @@ export const MainEditor = observer(() => {
     
   })
 
+  const spark = useSpark(sparkEditor?.currentlyEditingSpark?.id)
+
 
   const saveEditor = useCallback((docJson) => {
     console.log("Attempting to save...")
@@ -38,7 +41,6 @@ export const MainEditor = observer(() => {
           doc: JSON.stringify(docJson)
         }
       })
-      console.log(docJson)
     }
   }, [sparkEditor])
 
@@ -105,6 +107,9 @@ export const MainEditor = observer(() => {
       <Box position="absolute" top="20px" right="150px">
         {isSavingEditor ? 'Saving...'  : ''}
       </Box>
+      <Flex>
+        {spark?.tags.map((tag) => (<Tag name={tag.name} closeable={false} color="orange" />))}
+      </Flex>
       <Box mt="120px">
       </Box>
       <Flex justify="center" width="100%" height="300px">

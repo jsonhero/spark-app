@@ -34,10 +34,12 @@ export class SparkService {
       where: { id },
     });
 
-    return this.repository.save({
+    await this.repository.save({
       ...spark,
       doc,
     });
+
+    return this.findById(id);
   }
 
   async delete(id: string) {
@@ -47,8 +49,13 @@ export class SparkService {
   }
 
   async findById(id: string) {
-    return this.repository.findOne({
-      id,
-    });
+    return this.repository.findOne(
+      {
+        id,
+      },
+      {
+        relations: ['tags'],
+      },
+    );
   }
 }
