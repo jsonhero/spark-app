@@ -15,6 +15,8 @@ import {
   CreateTagInput,
   AddTagToSparkInput,
   AddTagToSparkPayload,
+  DeleteTagFromSparkInput,
+  DeleteTagFromSparkPayload,
 } from '../../graph';
 import { toGlobalId, fromGlobalId } from '@graph/utils';
 
@@ -49,6 +51,23 @@ export class TagResolver {
 
     return {
       addedTag: tagWithAddedSpark,
+    };
+  }
+
+  @Mutation(() => DeleteTagFromSparkPayload)
+  public async deleteTagFromSpark(
+    @Args('input') input: DeleteTagFromSparkInput,
+  ): Promise<DeleteTagFromSparkPayload> {
+    const globalizedInput = {
+      sparkId: fromGlobalId(input.sparkId).id,
+      tagId: fromGlobalId(input.tagId).id,
+    };
+
+    await this.tagService.deleteTagFromSpark(globalizedInput);
+
+    return {
+      deleteTagId: input.tagId,
+      relatedSparkId: input.sparkId,
     };
   }
 

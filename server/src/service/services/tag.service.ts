@@ -3,7 +3,11 @@ import { Repository } from 'typeorm';
 
 import { DbConnection } from '../../db';
 import { Spark, Tag, Spark_X_Tag } from '@entity';
-import { CreateTagInput, AddTagToSparkInput } from '../../api/graph';
+import {
+  CreateTagInput,
+  AddTagToSparkInput,
+  DeleteTagFromSparkInput,
+} from '../../api/graph';
 import { SparkService } from './spark.service';
 
 @Injectable()
@@ -48,5 +52,15 @@ export class TagService {
     tagToReceiveSpark.sparks.push(sparkToAdd);
 
     return this.repository.save(tagToReceiveSpark);
+  }
+
+  async deleteTagFromSpark(input: DeleteTagFromSparkInput) {
+    await this.repository
+      .createQueryBuilder()
+      .delete()
+      .from(Spark_X_Tag)
+      .where('spark_id = :id', { id: input.sparkId })
+      .andWhere('tag_id = :id', { id: input.tagId })
+      .execute();
   }
 }
