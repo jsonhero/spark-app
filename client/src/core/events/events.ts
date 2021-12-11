@@ -1,5 +1,6 @@
 import { EventEmitter } from "events"
 import StrictEventEmitter from 'strict-event-emitter-types';
+import { SuggestionKeyDownProps } from '@tiptap/suggestion'
 
 // import { Editor } from '@tiptap/core'
 import { Transaction } from 'prosemirror-state'
@@ -17,12 +18,17 @@ export interface SparkEditorSwitchEvent extends AppEvent {
   spark: GenericSparkFragment
 }
 
+export interface TagSuggestionKeyDownEvent extends AppEvent {
+  suggestion: SuggestionKeyDownProps
+}
+
 export type ListenerType<T> = [T] extends [(...args: infer U) => any] ? U : [T] extends [void] ? [] : [T];
 
 export enum AppEventType {
   updateEditor = 'updateEditor',
   clearEditor = 'clearEditor',
-  switchEditor = 'switchEditor'
+  switchEditor = 'switchEditor',
+  tagSuggestionKeyDown = 'tagSuggestionKeydown'
 }
 
 type AppEventTypeKeys = keyof typeof AppEventType;
@@ -32,6 +38,7 @@ export interface AppEvents extends AppEventTypeKeyFields {
   updateEditor: (event: SparkEditorUpdateEvent) => void; 
   clearEditor: (event: AppEvent) => void
   switchEditor: (event: SparkEditorSwitchEvent) => void;
+  tagSuggestionKeyDown: (event: TagSuggestionKeyDownEvent) => void;
 }
 
 export type AppEmitter = StrictEventEmitter<EventEmitter, AppEvents>
@@ -42,3 +49,4 @@ export function createAppEmitter(): AppEmitter {
 }
 
 
+export const appEmitter = createAppEmitter()

@@ -1,7 +1,12 @@
+// import { SuggestionKeyDownProps } from '@tiptap/suggestion'
+
 import { tagPopoverStore } from '../../../core/store'
+import { appEmitter, AppEventType } from '@/core/events'
+
 
 export const tagSuggestions = {
   render: () => {
+
     return {
       onStart(props) {
 
@@ -15,6 +20,8 @@ export const tagSuggestions = {
         tagPopoverStore.resetSelection()
       },
       onKeyDown(props) {
+
+        appEmitter.emit(AppEventType.tagSuggestionKeyDown, props);
 
         if (props.event.key === 'Escape') {
           tagPopoverStore.setProps(null)

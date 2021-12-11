@@ -1,7 +1,7 @@
 import * as React from 'react'
 import { createContext } from 'react'
 
-import { AppEmitter, createAppEmitter } from './events'
+import { AppEmitter, appEmitter } from './events'
 
 
 
@@ -11,7 +11,7 @@ export const AppEventEmitterContext = createContext<AppEmitter>(
 
 export const AppEventEmitterProvider: React.FC = (props) => {
   return (
-    <AppEventEmitterContext.Provider value={createAppEmitter()}>
+    <AppEventEmitterContext.Provider value={appEmitter}>
       {props.children}
     </AppEventEmitterContext.Provider>
   )

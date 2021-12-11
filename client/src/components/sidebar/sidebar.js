@@ -38,7 +38,7 @@ export const Sidebar = observer(({ tagPopoverStore, globalStore }) => {
             Recent Tags
           </Box>
           <Flex justify="flex-start" flexWrap="wrap">
-            {tagPopoverStore.possibleTags.map((name) => <Box key={name} mr="xsm" mt="xsm" onClick={() => onTagClick(name)}><Tag name={name} /></Box>)}
+            {tagPopoverStore.possibleTags.map((name, i) => <Box key={i} mr="xsm" mt="xsm" onClick={() => onTagClick(name)}><Tag name={name} /></Box>)}
           </Flex>
         </Box>
       </Box>
