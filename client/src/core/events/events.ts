@@ -28,7 +28,7 @@ export enum AppEventType {
   updateEditor = 'updateEditor',
   clearEditor = 'clearEditor',
   switchEditor = 'switchEditor',
-  tagSuggestionKeyDown = 'tagSuggestionKeydown'
+  tagSuggestionKeyDown = 'tagSuggestionKeyDown'
 }
 
 type AppEventTypeKeys = keyof typeof AppEventType;

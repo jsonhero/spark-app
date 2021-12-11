@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { Repository } from 'typeorm';
+import { Repository, ILike, FindManyOptions } from 'typeorm';
 
 import { DbConnection } from '../../db';
 import { Spark, Tag, Spark_X_Tag } from '@entity';
@@ -21,8 +21,18 @@ export class TagService {
     return this.connection.getRepository(Tag);
   }
 
-  findAll(): Promise<Tag[]> {
-    return this.repository.find();
+  findAll({ query = null }: { query?: string }): Promise<Tag[]> {
+    let options: FindManyOptions<Tag> = {};
+
+    if (query) {
+      options = {
+        where: {
+          name: ILike(`%${query}%`),
+        },
+      };
+    }
+
+    return this.repository.find(options);
   }
 
   async create(input: CreateTagInput) {

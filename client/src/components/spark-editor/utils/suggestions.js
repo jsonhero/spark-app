@@ -1,6 +1,6 @@
 // import { SuggestionKeyDownProps } from '@tiptap/suggestion'
 
-import { tagPopoverStore } from '../../../core/store'
+import { tagSuggestionStore } from '../../../core/store'
 import { appEmitter, AppEventType } from '@/core/events'
 
 
@@ -10,46 +10,47 @@ export const tagSuggestions = {
     return {
       onStart(props) {
 
-        tagPopoverStore.setProps(props)
+        tagSuggestionStore.setProps(props)
       },
       onUpdate(props) {
-        tagPopoverStore.setProps(props)
+        tagSuggestionStore.setProps(props)
       },
       onExit() {
-        tagPopoverStore.setProps(null)
-        tagPopoverStore.resetSelection()
+        console.log('exiting?')
+        // tagPopoverStore.setProps(null)
+        // tagPopoverStore.resetSelection()
       },
       onKeyDown(props) {
 
-        appEmitter.emit(AppEventType.tagSuggestionKeyDown, props);
+        appEmitter.emit(AppEventType.tagSuggestionKeyDown, { suggestion: props });
 
         if (props.event.key === 'Escape') {
-          tagPopoverStore.setProps(null)
+          tagSuggestionStore.setProps(null)
 
           return true
         }
 
         if (props.event.key === 'ArrowUp') {
-          tagPopoverStore.upHandler()
+        //   tagPopoverStore.upHandler()
           return true
         }
   
         if (props.event.key === 'ArrowDown') {
-          tagPopoverStore.downHandler()
+        //   tagPopoverStore.downHandler()
           return true
         }
 
-        if (props.event.key === ' ') {
-          tagPopoverStore.addPossibleTag()
-          return true
-        }
+        // if (props.event.key === ' ') {
+        //   tagPopoverStore.addPossibleTag()
+        //   return true
+        // }
   
         if (props.event.key === 'Enter') {
-          tagPopoverStore.enterHandler()
+        //   tagPopoverStore.enterHandler()
           return true
         }
 
-        tagPopoverStore.resetSelection()
+        // tagPopoverStore.resetSelection()
   
         return false
       },

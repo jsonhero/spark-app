@@ -25,8 +25,10 @@ export class TagResolver {
   constructor(private readonly tagService: TagService) {}
 
   @Query(() => [Tag])
-  public async tags(): Promise<Tag[]> {
-    return this.tagService.findAll();
+  public async tags(
+    @Args({ name: 'query', nullable: true }) query: string,
+  ): Promise<Tag[]> {
+    return this.tagService.findAll({ query });
   }
 
   @Mutation(() => CreateTagPayload)

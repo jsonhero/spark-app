@@ -1,0 +1,5 @@
+query getTags($query: String) {
+  tags(query: $query) {
+    ...GenericTag
+  }
+}

@@ -42,12 +42,24 @@ export type DeleteSparkPayload = {
   id: Scalars['String'];
 };
 
+export type DeleteTagFromSparkInput = {
+  sparkId: Scalars['ID'];
+  tagId: Scalars['ID'];
+};
+
+export type DeleteTagFromSparkPayload = {
+  __typename?: 'DeleteTagFromSparkPayload';
+  deleteTagId: Scalars['ID'];
+  relatedSparkId: Scalars['ID'];
+};
+
 export type Mutation = {
   __typename?: 'Mutation';
   addTagToSpark: AddTagToSparkPayload;
   createSpark: Spark;
   createTag: CreateTagPayload;
   deleteSpark: DeleteSparkPayload;
+  deleteTagFromSpark: DeleteTagFromSparkPayload;
   updateSpark: UpdateSparkPayload;
 };
 
@@ -69,6 +81,11 @@ export type MutationCreateTagArgs = {
 
 export type MutationDeleteSparkArgs = {
   id: Scalars['ID'];
+};
+
+
+export type MutationDeleteTagFromSparkArgs = {
+  input: DeleteTagFromSparkInput;
 };
 
 
@@ -97,6 +114,11 @@ export type QueryNodeArgs = {
 
 export type QueryNodesArgs = {
   ids: Array<Scalars['ID']>;
+};
+
+
+export type QueryTagsArgs = {
+  query?: InputMaybe<Scalars['String']>;
 };
 
 export type Spark = Node & {
@@ -170,6 +192,13 @@ export type GetSparksQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type GetSparksQuery = { __typename?: 'Query', sparks: Array<{ __typename?: 'Spark', id: string, doc?: string | null | undefined, createdAt: any, updatedAt: any, tags: Array<{ __typename?: 'Tag', id: string, name: string }> }> };
+
+export type GetTagsQueryVariables = Exact<{
+  query?: InputMaybe<Scalars['String']>;
+}>;
+
+
+export type GetTagsQuery = { __typename?: 'Query', tags: Array<{ __typename?: 'Tag', id: string, name: string }> };
 
 export const GenericSparkFragmentDoc = gql`
     fragment GenericSpark on Spark {
@@ -397,3 +426,38 @@ export function useGetSparksLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<
 export type GetSparksQueryHookResult = ReturnType<typeof useGetSparksQuery>;
 export type GetSparksLazyQueryHookResult = ReturnType<typeof useGetSparksLazyQuery>;
 export type GetSparksQueryResult = Apollo.QueryResult<GetSparksQuery, GetSparksQueryVariables>;
+export const GetTagsDocument = gql`
+    query getTags($query: String) {
+  tags(query: $query) {
+    ...GenericTag
+  }
+}
+    ${GenericTagFragmentDoc}`;
+
+/**
+ * __useGetTagsQuery__
+ *
+ * To run a query within a React component, call `useGetTagsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetTagsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetTagsQuery({
+ *   variables: {
+ *      query: // value for 'query'
+ *   },
+ * });
+ */
+export function useGetTagsQuery(baseOptions?: Apollo.QueryHookOptions<GetTagsQuery, GetTagsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetTagsQuery, GetTagsQueryVariables>(GetTagsDocument, options);
+      }
+export function useGetTagsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetTagsQuery, GetTagsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetTagsQuery, GetTagsQueryVariables>(GetTagsDocument, options);
+        }
+export type GetTagsQueryHookResult = ReturnType<typeof useGetTagsQuery>;
+export type GetTagsLazyQueryHookResult = ReturnType<typeof useGetTagsLazyQuery>;
+export type GetTagsQueryResult = Apollo.QueryResult<GetTagsQuery, GetTagsQueryVariables>;
