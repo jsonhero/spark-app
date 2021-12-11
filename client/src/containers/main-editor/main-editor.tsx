@@ -6,10 +6,19 @@ import { useApolloClient } from '@apollo/client'
 import _ from 'lodash'
 
 import { SparkEditor, Tag } from '@/components'
-import { useCreateSparkMutation, useDeleteSparkMutation, useUpdateSparkMutation, GetSparksDocument, Spark } from '@operations'
+import { useCreateSparkMutation, useDeleteSparkMutation, useUpdateSparkMutation, GetSparksDocument, GenericSparkFragment } from '@operations'
 import { useEventEmitter, useThrottle, useDeleteSpark, useSpark } from '@/core/hooks'
 import { AppEventType } from '@/core/events'
 import { SparkEditorStore } from '@/core/store';
+import { Node } from 'prosemirror-model'
+
+function isEditorEmpty(n: Node, spark: GenericSparkFragment | null): boolean {
+  const content = n.content
+  const firstChild = n.content.firstChild
+  const isDocEmpty = content.childCount <= 1 && firstChild?.type.name === 'heading' && firstChild?.textContent.length === 0;
+  const isSparkEmpty = spark ? spark.tags.length === 0 : true
+  return isDocEmpty && isSparkEmpty
+}
 
 export const MainEditor = observer(() => {
 
@@ -58,8 +67,11 @@ export const MainEditor = observer(() => {
     const editor = event.editorStore.editor
 
     if (editor) {
-      const isPreviouslyEmpty = transaction.before.textContent.length === 0
-      const isEmpty = transaction.doc.textContent.length === 0
+      const isPreviouslyEmpty = isEditorEmpty(transaction.before, spark)
+      const isEmpty = isEditorEmpty(transaction.doc, spark)
+
+      console.log(isPreviouslyEmpty, isEmpty)
+
       if (isPreviouslyEmpty && !isEmpty) {
         const docString: string = JSON.stringify(editor.getJSON())
         createSparkMutation({
