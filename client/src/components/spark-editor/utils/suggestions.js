@@ -17,13 +17,14 @@ export const tagSuggestions = {
       },
       onExit() {
         console.log('exiting?')
+        tagSuggestionStore.setProps(null)
+
         // tagPopoverStore.setProps(null)
         // tagPopoverStore.resetSelection()
       },
       onKeyDown(props) {
 
         appEmitter.emit(AppEventType.tagSuggestionKeyDown, { suggestion: props });
-
         if (props.event.key === 'Escape') {
           tagSuggestionStore.setProps(null)
 
@@ -40,10 +41,11 @@ export const tagSuggestions = {
           return true
         }
 
-        // if (props.event.key === ' ') {
+        if (props.event.key === ' ') {
         //   tagPopoverStore.addPossibleTag()
         //   return true
-        // }
+          return false
+        }
   
         if (props.event.key === 'Enter') {
         //   tagPopoverStore.enterHandler()

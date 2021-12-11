@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useCallback, useRef } from 'react'
+import React, { useMemo, useState, useCallback, useRef, useEffect } from 'react'
 import { usePopper } from 'react-popper'
 import { observer } from 'mobx-react-lite'
 import { Flex, List, ListItem } from '@chakra-ui/react'
@@ -7,14 +7,12 @@ import { globalStore, TagSuggestionStore } from '@/core/store'
 import { useApolloClient } from '@apollo/client'
 import { useEventEmitter } from '@/core/hooks'
 import { AppEventType } from '@/core/events'
-
 interface TagPopoverProps {
   tagSuggestionStore: TagSuggestionStore;
 }
 
 // @ts-ignore
 const TagPopoverComponent: React.FC<TagPopoverProps> = ({ tagSuggestionStore }) => {
-  console.log("le render?")
   const { useListener } = useEventEmitter()
   const listRef = useRef<HTMLUListElement | null>(null)
   const [selectedIndex, setSelectedIndex] = useState(-1) 
@@ -94,34 +92,6 @@ const TagPopoverComponent: React.FC<TagPopoverProps> = ({ tagSuggestionStore }) 
     })
   }, [activeEditor])
 
-  useListener(AppEventType.tagSuggestionKeyDown, ({ suggestion }) => {
-    const listLength = listRef.current?.childNodes.length || 0
-
-    if (suggestion.event.key === 'ArrowDown') {
-      if (selectedIndex === -1 || selectedIndex === listLength - 1) {
-        setSelectedIndex(0)
-      } else {
-        setSelectedIndex(selectedIndex + 1)
-      }
-    } else if (suggestion.event.key === 'ArrowUp') {
-      if (selectedIndex === -1 || selectedIndex === 0) {
-        setSelectedIndex(listLength - 1)
-      } else {
-        setSelectedIndex(selectedIndex - 1)
-      }
-    } else if (suggestion.event.key === 'Enter') {
-
-      if (selectedIndex !== -1) {
-        const possibleNode = listRef.current?.childNodes[selectedIndex] as HTMLLIElement
-        if (possibleNode) {
-          possibleNode.click()
-        }
-      }
-      tagSuggestionStore.setProps(null)
-    }
-
-  })
-
   const onItemClick = useCallback((item: GenericTagFragment | null) => {
     if (item === null) {
       onCreateTag()
@@ -159,7 +129,51 @@ const TagPopoverComponent: React.FC<TagPopoverProps> = ({ tagSuggestionStore }) 
 
   }, [query.length, data])
 
+  // Automatically select tag if it exists
+  useEffect(() => {
+    const matchingExistingTagIndex = listItems.findIndex((tag) => {
+      if (tag) {
+        return tag.name === query
+      }
+      return false;
+    })
+
+    if (matchingExistingTagIndex !== -1) {
+      setSelectedIndex(matchingExistingTagIndex)
+      return;
+    }
+  }, [listItems])
+
+  useListener(AppEventType.tagSuggestionKeyDown, ({ suggestion }) => {
+    const listLength = listRef.current?.childNodes.length || 0
+
+    if (suggestion.event.key === 'ArrowDown') {
+      if (selectedIndex === -1 || selectedIndex === listLength - 1) {
+        setSelectedIndex(0)
+      } else {
+        setSelectedIndex(selectedIndex + 1)
+      }
+    } else if (suggestion.event.key === 'ArrowUp') {
+      if (selectedIndex === -1 || selectedIndex === 0) {
+        setSelectedIndex(listLength - 1)
+      } else {
+        setSelectedIndex(selectedIndex - 1)
+      }
+    } else if (suggestion.event.key === 'Enter') {
+
+      if (selectedIndex !== -1) {
+        const possibleNode = listRef.current?.childNodes[selectedIndex] as HTMLLIElement
+        if (possibleNode) {
+          possibleNode.click()
+        }
+      } else {
+        // tagSuggestionStore.setProps(null)
+      }
+    }
+  })
+
   if (!tagSuggestionStore.props) return null;
+  
 
 
   return (
