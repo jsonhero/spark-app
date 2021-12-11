@@ -70,8 +70,6 @@ export const MainEditor = observer(() => {
       const isPreviouslyEmpty = isEditorEmpty(transaction.before, spark)
       const isEmpty = isEditorEmpty(transaction.doc, spark)
 
-      console.log(isPreviouslyEmpty, isEmpty)
-
       if (isPreviouslyEmpty && !isEmpty) {
         const docString: string = JSON.stringify(editor.getJSON())
         createSparkMutation({

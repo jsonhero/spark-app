@@ -19,13 +19,13 @@ export class Spark_X_Tag {
   spark_id: string;
 
   @ManyToOne(() => Tag, (tag) => tag.sparks, {
-    onDelete: 'SET NULL',
+    onDelete: 'CASCADE',
   })
   @JoinColumn({ name: 'tag_id', referencedColumnName: 'id' })
   tag: Tag;
 
   @ManyToOne(() => Spark, (spark) => spark.tags, {
-    onDelete: 'SET NULL',
+    onDelete: 'CASCADE',
   })
   @JoinColumn({ name: 'spark_id', referencedColumnName: 'id' })
   spark: Spark;
