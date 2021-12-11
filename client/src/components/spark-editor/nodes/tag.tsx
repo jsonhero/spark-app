@@ -39,17 +39,23 @@ export const Tag = Node.create<TagOptions>({
           editor
             .chain()
             .focus()
-            .insertContentAt(range, [
-              {
-                type: this.name,
-                attrs: props,
-              },
-              {
-                type: 'text',
-                text: ' ',
-              },
-            ])
+            .deleteRange(range)
             .run()
+
+          // editor
+          //   .chain()
+          //   .focus()
+          //   .insertContentAt(range, [
+          //     {
+          //       type: this.name,
+          //       attrs: props,
+          //     },
+          //     {
+          //       type: 'text',
+          //       text: ' ',
+          //     },
+          //   ])
+          //   .run()
         },
         allow: ({ editor, range }) => {
           const $from = editor.state.doc.resolve(range.from)

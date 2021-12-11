@@ -1,0 +1,7 @@
+mutation addTagToSpark($input: AddTagToSparkInput!) {
+  addTagToSpark(input: $input) {
+    addedTag {
+      ...GenericTag
+    }
+  }
+}

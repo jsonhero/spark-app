@@ -2,7 +2,7 @@ import React, { useMemo, useState, useCallback, useRef } from 'react'
 import { usePopper } from 'react-popper'
 import { observer } from 'mobx-react-lite'
 import { Flex, List, ListItem } from '@chakra-ui/react'
-import { GenericTagFragment, useCreateTagMutation, useGetTagsQuery } from '@operations'
+import { GenericTagFragment, useCreateTagMutation, useGetTagsQuery, useAddTagToSparkMutation } from '@operations'
 import { globalStore, TagSuggestionStore } from '@/core/store'
 import { useApolloClient } from '@apollo/client'
 import { useEventEmitter } from '@/core/hooks'
@@ -35,6 +35,7 @@ const TagPopoverComponent: React.FC<TagPopoverProps> = ({ tagSuggestionStore }) 
   const client = useApolloClient()
 
   const [createTagMutation, {}] = useCreateTagMutation()
+  const [addTagToSparkMutation, {}] = useAddTagToSparkMutation()
 
   const query = useMemo(() => tagSuggestionStore.props?.query || '', [tagSuggestionStore.props?.query])
 
@@ -71,6 +72,28 @@ const TagPopoverComponent: React.FC<TagPopoverProps> = ({ tagSuggestionStore }) 
     })
   }, [activeEditor, query])
 
+  const onAddTagToSpark = useCallback((tagId: string, sparkId: string) => {
+    addTagToSparkMutation({
+      variables: {
+        input: {
+          tagId,
+          sparkId,
+        }
+      },
+      onCompleted({ addTagToSpark  }) {
+        client.cache.modify({
+          // @ts-ignore
+          id: client.cache.identify(activeEditor.currentlyEditingSpark),
+          fields: {
+            tags(cachedTags) {
+              return [...cachedTags, addTagToSpark.addedTag]
+            }
+          }
+        })
+      }
+    })
+  }, [activeEditor])
+
   useListener(AppEventType.tagSuggestionKeyDown, ({ suggestion }) => {
     const listLength = listRef.current?.childNodes.length || 0
 
@@ -89,9 +112,8 @@ const TagPopoverComponent: React.FC<TagPopoverProps> = ({ tagSuggestionStore }) 
     } else if (suggestion.event.key === 'Enter') {
 
       if (selectedIndex !== -1) {
-        const possibleNode = listRef.current?.childNodes[selectedIndex]
+        const possibleNode = listRef.current?.childNodes[selectedIndex] as HTMLLIElement
         if (possibleNode) {
-          // @ts-ignore
           possibleNode.click()
         }
       }
@@ -100,23 +122,33 @@ const TagPopoverComponent: React.FC<TagPopoverProps> = ({ tagSuggestionStore }) 
 
   })
 
-  const onItemClick = useCallback((item) => {
+  const onItemClick = useCallback((item: GenericTagFragment | null) => {
     if (item === null) {
       onCreateTag()
+      tagSuggestionStore.props?.command({})
     } else {
-      tagSuggestionStore.props?.command({
-        id: item.name,
-      })
-      // tagPopoverStore.selectItem(selectedIndex)
+      if (activeEditor?.currentlyEditingSpark?.id) {
+        onAddTagToSpark(item.id, activeEditor.currentlyEditingSpark.id)
+        tagSuggestionStore.props?.command({})
+      }
     }
 
-  }, [selectedIndex, onCreateTag])
+  }, [activeEditor?.currentlyEditingSpark?.id, onCreateTag])
 
   const listItems: (GenericTagFragment | null)[] = useMemo(() => {
     const items = [];
+    
 
     if (query.length) {
-      items.push(null)
+      if (data?.tags.length) {
+        const matchedExistingTag = data.tags.find((tag) => tag.name === query)
+        // add if there isn't a matching tag
+        if (!matchedExistingTag) {
+          items.push(null)
+        }
+      } else {
+        items.push(null)
+      }
     }
 
     if (data?.tags) {

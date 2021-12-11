@@ -49,6 +49,9 @@ export class TagResolver {
   public async addTagToSpark(
     @Args('input') input: AddTagToSparkInput,
   ): Promise<AddTagToSparkPayload> {
+    input.tagId = fromGlobalId(input.tagId).id;
+    input.sparkId = fromGlobalId(input.sparkId).id;
+
     const tagWithAddedSpark = await this.tagService.addTagToSpark(input);
 
     return {

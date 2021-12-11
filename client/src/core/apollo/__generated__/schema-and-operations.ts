@@ -152,6 +152,13 @@ export type GenericSparkFragment = { __typename?: 'Spark', id: string, doc?: str
 
 export type GenericTagFragment = { __typename?: 'Tag', id: string, name: string };
 
+export type AddTagToSparkMutationVariables = Exact<{
+  input: AddTagToSparkInput;
+}>;
+
+
+export type AddTagToSparkMutation = { __typename?: 'Mutation', addTagToSpark: { __typename?: 'AddTagToSparkPayload', addedTag: { __typename?: 'Tag', id: string, name: string } } };
+
 export type CreateSparkMutationVariables = Exact<{
   input: SparkCreateInput;
 }>;
@@ -218,6 +225,41 @@ export const GenericTagFragmentDoc = gql`
   name
 }
     `;
+export const AddTagToSparkDocument = gql`
+    mutation addTagToSpark($input: AddTagToSparkInput!) {
+  addTagToSpark(input: $input) {
+    addedTag {
+      ...GenericTag
+    }
+  }
+}
+    ${GenericTagFragmentDoc}`;
+export type AddTagToSparkMutationFn = Apollo.MutationFunction<AddTagToSparkMutation, AddTagToSparkMutationVariables>;
+
+/**
+ * __useAddTagToSparkMutation__
+ *
+ * To run a mutation, you first call `useAddTagToSparkMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useAddTagToSparkMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [addTagToSparkMutation, { data, loading, error }] = useAddTagToSparkMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useAddTagToSparkMutation(baseOptions?: Apollo.MutationHookOptions<AddTagToSparkMutation, AddTagToSparkMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<AddTagToSparkMutation, AddTagToSparkMutationVariables>(AddTagToSparkDocument, options);
+      }
+export type AddTagToSparkMutationHookResult = ReturnType<typeof useAddTagToSparkMutation>;
+export type AddTagToSparkMutationResult = Apollo.MutationResult<AddTagToSparkMutation>;
+export type AddTagToSparkMutationOptions = Apollo.BaseMutationOptions<AddTagToSparkMutation, AddTagToSparkMutationVariables>;
 export const CreateSparkDocument = gql`
     mutation createSpark($input: SparkCreateInput!) {
   createSpark(input: $input) {

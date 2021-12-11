@@ -57,11 +57,18 @@ export class TagService {
 
   async addTagToSpark(input: AddTagToSparkInput) {
     const tagToReceiveSpark = await this.repository.findOne(input.tagId);
-    const sparkToAdd = await this.sparkService.findById(input.sparkId);
 
-    tagToReceiveSpark.sparks.push(sparkToAdd);
+    await this.repository
+      .createQueryBuilder()
+      .insert()
+      .into(Spark_X_Tag)
+      .values({
+        spark_id: input.sparkId,
+        tag_id: input.tagId,
+      })
+      .execute();
 
-    return this.repository.save(tagToReceiveSpark);
+    return tagToReceiveSpark;
   }
 
   async deleteTagFromSpark(input: DeleteTagFromSparkInput) {
