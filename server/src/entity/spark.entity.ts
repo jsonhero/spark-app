@@ -9,6 +9,7 @@ import {
   JoinTable,
 } from 'typeorm';
 import { Field, ID, ObjectType } from '@nestjs/graphql';
+import { GraphQLJSONObject } from 'graphql-type-json';
 
 import { Node } from '../api/graph';
 
@@ -24,8 +25,17 @@ export class Spark implements Node {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Field({ nullable: true })
-  @Column({ type: 'jsonb', default: null })
+  @Field(() => GraphQLJSONObject, { nullable: true })
+  @Column({
+    type: 'jsonb',
+    default: null,
+    transformer: {
+      from: (value) => JSON.parse(value),
+      to: (value) => {
+        return value;
+      },
+    },
+  })
   doc: string;
 
   @Field()

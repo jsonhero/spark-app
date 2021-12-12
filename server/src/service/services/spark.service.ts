@@ -16,10 +16,10 @@ export class SparkService {
   async findAll(tags: string[]): Promise<Spark[]> {
     let query = this.repository
       .createQueryBuilder('spark')
-      .innerJoinAndSelect('spark.tags', 'tag')
+      .leftJoinAndSelect('spark.tags', 'tag')
       .orderBy('spark.updated_at', 'DESC');
 
-    if (tags) {
+    if (tags != null) {
       query = query.where('tag.name IN (:...tags)', {
         tags,
       });
