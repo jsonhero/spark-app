@@ -87,7 +87,7 @@ export const SparksSidebarComponent: React.FC<SparksSidebarProps> = ({
         >
           {
             data?.sparks.map((spark) => {
-              const parsedDoc: any = spark.doc && JSON.parse(spark.doc)
+              const parsedDoc: any = spark.doc && spark.doc
               return (
                 <Box key={spark.id} position="relative" width="100%" minHeight="88px" cursor="pointer">
                   <Box position="absolute" top="10px" right="15px">

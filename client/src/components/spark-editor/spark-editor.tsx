@@ -12,7 +12,7 @@ import { Extension } from '@tiptap/core'
 import { toJS } from 'mobx';
 import _, { isEmpty } from 'lodash'
 
-import { Tag } from './nodes'
+import { Tag, FixedTitleNode } from './nodes'
 import { tagSuggestions } from './utils'
 import { findTags, extractTextFromJSONDoc } from '@/utils'
 import { Spark } from '@operations'
@@ -23,7 +23,7 @@ import { observer } from 'mobx-react';
 
 
 const CustomDocument = Document.extend({
-  content: 'heading block*',
+  content: 'fixedtitle block*',
 })
 
 const EscapeBlurExtension = Extension.create({
@@ -61,8 +61,10 @@ const SparkEditorComponent: React.FC<SparkEditorProps> = observer(({ onRegisterE
         Paragraph,
         Text,
         Placeholder.configure({
+          showOnlyWhenEditable: false,
+          showOnlyCurrent: false,
           placeholder: ({ node }) => {
-            if (node.type.name === 'heading') {
+            if (node.type.name === 'fixedtitle') {
               return 'Untitled'
             }
 
@@ -75,10 +77,11 @@ const SparkEditorComponent: React.FC<SparkEditorProps> = observer(({ onRegisterE
           },
           suggestion: tagSuggestions
         }),
-        EscapeBlurExtension
+        EscapeBlurExtension,
+        FixedTitleNode
     ],
-    content: sparkEditor.currentlyEditingSpark && sparkEditor.currentlyEditingSpark.doc ? JSON.parse(sparkEditor.currentlyEditingSpark.doc) : '',
-    onUpdate({ transaction }) {
+    content: sparkEditor.currentlyEditingSpark && sparkEditor.currentlyEditingSpark.doc ? sparkEditor.currentlyEditingSpark.doc : '',
+    onUpdate({ transaction, editor }) {
       emit(AppEventType.updateEditor, {
         editorStore: sparkEditor,
         transaction: transaction

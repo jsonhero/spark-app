@@ -46,7 +46,7 @@ export const extractTextFromJSONDoc = (doc: any, charLimit = 200) => {
 export const extractTitleFromJSONDoc = (doc: any) => {
   if (doc.type === 'doc' && doc.content && doc.content.length) {
     const firstNode = doc.content[0]
-    if (firstNode.type === 'heading' && firstNode.content) {
+    if (firstNode.type === 'fixedtitle' && firstNode.content) {
       return firstNode.content[0].text
     }
   }

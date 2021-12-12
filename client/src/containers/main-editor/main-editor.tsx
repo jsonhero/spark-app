@@ -11,11 +11,12 @@ import { AppEventType } from '@/core/events'
 import { SparkEditorStore } from '@/core/store';
 import { SparkTag } from '@/containers'
 import { Node } from 'prosemirror-model'
+import { JSONContent } from '@tiptap/core'
 
 function isEditorEmpty(n: Node, spark: GenericSparkFragment | null): boolean {
   const content = n.content
   const firstChild = n.content.firstChild
-  const isDocEmpty = content.childCount <= 1 && firstChild?.type.name === 'heading' && firstChild?.textContent.length === 0;
+  const isDocEmpty = content.childCount <= 1 && firstChild?.type.name === 'fixedtitle' && firstChild?.textContent.length === 0;
   const isSparkEmpty = spark ? spark.tags.length === 0 : true
   return isDocEmpty && isSparkEmpty
 }
@@ -40,7 +41,6 @@ export const MainEditor = observer(() => {
 
   const spark = useSpark(sparkEditor?.currentlyEditingSpark?.id)
 
-
   const saveEditor = useCallback((docJson) => {
     console.log("Attempting to save...")
     if (sparkEditor?.currentlyEditingSpark) {
@@ -54,13 +54,7 @@ export const MainEditor = observer(() => {
   }, [sparkEditor])
 
 
-  const saveEditorThrottled = useThrottle(saveEditor, 2000)
-
-
-
-
-  // const saveEditor = _.throttle(unthrottledSaveEditor, 2000)
-  
+  const saveEditorThrottled = useThrottle(saveEditor, 2000)  
 
   useListener(AppEventType.updateEditor, (event) => {
     const transaction = event.transaction
@@ -96,7 +90,7 @@ export const MainEditor = observer(() => {
           id: client.cache.identify(sparkEditor?.currentlyEditingSpark),
           fields: {
             doc(cachedDoc) {
-              return JSON.stringify(editor.getJSON())
+              return editor.getJSON()
             }
           }
         })

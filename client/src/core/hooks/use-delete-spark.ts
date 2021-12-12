@@ -13,7 +13,7 @@ export const useDeleteSpark = (options?: DeleteSparkMutationOptions): [(sparkId:
         id: sparkId
       },
       onCompleted() {
-        client.cache.updateQuery({ query: GetSparksDocument }, (data) => ({
+        client.cache.updateQuery({ query: GetSparksDocument, variables: { tags: null } }, (data) => ({
           sparks: data.sparks.filter((spark: Spark) => spark.id !== sparkId)
         }))
 

@@ -1,0 +1,1 @@
+export { TitleExtension } from './title.extension'
