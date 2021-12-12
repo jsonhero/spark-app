@@ -195,8 +195,10 @@ const TagPopoverComponent: React.FC<TagPopoverProps> = ({ tagSuggestionStore }) 
             const props = {
               onMouseOver: () => setSelectedIndex(i),
               key: item ? item.id : 'create',
-              bg: i === selectedIndex && 'red',
-              onClick: () => onItemClick(item)
+              bg: i === selectedIndex && 'gray.300',
+              onClick: () => onItemClick(item),
+              px: 'xsm',
+              py: 'xxsm'
             }
             if (item === null) {
               // @ts-ignore
