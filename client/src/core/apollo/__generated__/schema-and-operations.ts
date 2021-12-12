@@ -117,6 +117,11 @@ export type QueryNodesArgs = {
 };
 
 
+export type QuerySparksArgs = {
+  tags?: InputMaybe<Array<Scalars['String']>>;
+};
+
+
 export type QueryTagsArgs = {
   query?: InputMaybe<Scalars['String']>;
 };
@@ -202,7 +207,9 @@ export type GetSparkNodeQueryVariables = Exact<{
 
 export type GetSparkNodeQuery = { __typename?: 'Query', node?: { __typename?: 'Spark', id: string, doc?: string | null | undefined, createdAt: any, updatedAt: any, tags: Array<{ __typename?: 'Tag', id: string, name: string }> } | { __typename?: 'Tag' } | null | undefined };
 
-export type GetSparksQueryVariables = Exact<{ [key: string]: never; }>;
+export type GetSparksQueryVariables = Exact<{
+  tags?: InputMaybe<Array<Scalars['String']> | Scalars['String']>;
+}>;
 
 
 export type GetSparksQuery = { __typename?: 'Query', sparks: Array<{ __typename?: 'Spark', id: string, doc?: string | null | undefined, createdAt: any, updatedAt: any, tags: Array<{ __typename?: 'Tag', id: string, name: string }> }> };
@@ -476,8 +483,8 @@ export type GetSparkNodeQueryHookResult = ReturnType<typeof useGetSparkNodeQuery
 export type GetSparkNodeLazyQueryHookResult = ReturnType<typeof useGetSparkNodeLazyQuery>;
 export type GetSparkNodeQueryResult = Apollo.QueryResult<GetSparkNodeQuery, GetSparkNodeQueryVariables>;
 export const GetSparksDocument = gql`
-    query getSparks {
-  sparks {
+    query getSparks($tags: [String!]) {
+  sparks(tags: $tags) {
     ...GenericSpark
   }
 }
@@ -495,6 +502,7 @@ export const GetSparksDocument = gql`
  * @example
  * const { data, loading, error } = useGetSparksQuery({
  *   variables: {
+ *      tags: // value for 'tags'
  *   },
  * });
  */

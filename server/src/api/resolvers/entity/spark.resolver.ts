@@ -22,8 +22,10 @@ export class SparkResolver {
   constructor(private readonly sparkService: SparkService) {}
 
   @Query(() => [Spark])
-  public async sparks(): Promise<Spark[]> {
-    const sparks = await this.sparkService.findAll();
+  public async sparks(
+    @Args({ name: 'tags', nullable: true, type: () => [String] }) tags: string[],
+  ): Promise<Spark[]> {
+    const sparks = await this.sparkService.findAll(tags);
     return sparks;
   }
 

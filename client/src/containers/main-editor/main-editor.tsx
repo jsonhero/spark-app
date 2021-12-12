@@ -79,7 +79,9 @@ export const MainEditor = observer(() => {
             }
           },
           onCompleted: (completedData) => {
-            client.cache.updateQuery({ query: GetSparksDocument }, (data) => ({
+            client.cache.updateQuery({ query: GetSparksDocument, variables: {
+              tags: null
+            } }, (data) => ({
               sparks: [completedData.createSpark, ...data.sparks]
             }))
             if (sparkEditor) {

@@ -42,7 +42,7 @@ const TagPopoverComponent: React.FC<TagPopoverProps> = ({ tagSuggestionStore }) 
     variables: {
       query,
     },
-    skip: query.length === 0,
+    // skip: query.length === 0,
   })
 
   const activeEditor = globalStore.activeEditors.find((editor) => editor.isActive)
@@ -123,7 +123,7 @@ const TagPopoverComponent: React.FC<TagPopoverProps> = ({ tagSuggestionStore }) 
     }
 
     if (data?.tags) {
-      return [...items, ...data.tags]
+      return [...items, ...data.tags.slice(0, 8)]
     }
 
     return items;
@@ -143,6 +143,13 @@ const TagPopoverComponent: React.FC<TagPopoverProps> = ({ tagSuggestionStore }) 
       setSelectedIndex(matchingExistingTagIndex)
       return;
     }
+
+    // Select 'create' if matching doesn't exist
+    if (listItems.length >= 1 && listItems[0] === null) {
+      setSelectedIndex(0)
+      return;
+    }
+
   }, [listItems])
 
   useListener(AppEventType.tagSuggestionKeyDown, ({ suggestion }) => {
@@ -170,6 +177,8 @@ const TagPopoverComponent: React.FC<TagPopoverProps> = ({ tagSuggestionStore }) 
       } else {
         // tagSuggestionStore.setProps(null)
       }
+    } else {
+      setSelectedIndex(-1)
     }
   })
 

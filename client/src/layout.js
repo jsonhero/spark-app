@@ -10,7 +10,7 @@ import {
 } from "react-location";
 
 import { Header, Sidebar, Main } from './components'
-import { SparksSidebar, MainEditor } from './containers'
+import { SparksSidebar, MainEditor, MainSidebar } from './containers'
 import { Home, Search } from './routes'
 import { tagPopoverStore, sparksStore, globalStore } from './core/store'
 
@@ -30,12 +30,9 @@ export const Layout = () => {
             // { path: "/search", element: <Search sparksStore={sparksStore} globalStore={globalStore} /> },
           ]}
         >
-          <Sidebar tagPopoverStore={tagPopoverStore} globalStore={globalStore} />
-          <SparksSidebar />
+          <MainSidebar globalStore={globalStore} />
+          <SparksSidebar globalStore={globalStore} />
           <Outlet />
-          {/* <Main tagPopoverStore={tagPopoverStore} globalStore={globalStore}>
-            <Outlet />
-          </Main> */}
         </Router>
       </Flex>
     </>

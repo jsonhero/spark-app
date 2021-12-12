@@ -1,5 +1,5 @@
-query getSparks {
-  sparks {
+query getSparks($tags: [String!]) {
+  sparks(tags: $tags) {
     ...GenericSpark
   }
 }

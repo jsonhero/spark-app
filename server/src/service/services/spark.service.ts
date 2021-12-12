@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { Repository } from 'typeorm';
+import { Repository, In, FindManyOptions } from 'typeorm';
 
 import { DbConnection } from '../../db';
 import { Spark } from '../../entity';
@@ -13,13 +13,20 @@ export class SparkService {
     return this.connection.getRepository(Spark);
   }
 
-  async findAll(): Promise<Spark[]> {
-    const sparks = await this.repository.find({
-      relations: ['tags'],
-      order: {
-        createdAt: 'DESC',
-      },
-    });
+  async findAll(tags: string[]): Promise<Spark[]> {
+    let query = this.repository
+      .createQueryBuilder('spark')
+      .innerJoinAndSelect('spark.tags', 'tag')
+      .orderBy('spark.updated_at', 'DESC');
+
+    if (tags) {
+      query = query.where('tag.name IN (:...tags)', {
+        tags,
+      });
+    }
+
+    const sparks = await query.getMany();
+
     return sparks;
   }
 

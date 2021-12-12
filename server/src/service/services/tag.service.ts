@@ -22,13 +22,18 @@ export class TagService {
   }
 
   findAll({ query = null }: { query?: string }): Promise<Tag[]> {
-    let options: FindManyOptions<Tag> = {};
+    let options: FindManyOptions<Tag> = {
+      order: {
+        createdAt: 'DESC',
+      },
+    };
 
     if (query) {
       options = {
         where: {
           name: ILike(`%${query}%`),
         },
+        ...options,
       };
     }
 
