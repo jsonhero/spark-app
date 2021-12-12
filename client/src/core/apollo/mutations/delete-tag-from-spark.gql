@@ -1,0 +1,6 @@
+mutation deleteTagFromSpark($input: DeleteTagFromSparkInput!) {
+  deleteTagFromSpark(input: $input) {
+    deleteTagId
+    relatedSparkId
+  }
+}

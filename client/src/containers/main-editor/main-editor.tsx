@@ -1,7 +1,6 @@
 import React, { useState, useCallback } from 'react'
 import { Box, Flex }  from '@chakra-ui/react'
 import { observer } from "mobx-react-lite"
-import { toJS } from 'mobx'
 import { useApolloClient } from '@apollo/client'
 import _ from 'lodash'
 
@@ -10,6 +9,7 @@ import { useCreateSparkMutation, useDeleteSparkMutation, useUpdateSparkMutation,
 import { useEventEmitter, useThrottle, useDeleteSpark, useSpark } from '@/core/hooks'
 import { AppEventType } from '@/core/events'
 import { SparkEditorStore } from '@/core/store';
+import { SparkTag } from '@/containers'
 import { Node } from 'prosemirror-model'
 
 function isEditorEmpty(n: Node, spark: GenericSparkFragment | null): boolean {
@@ -117,16 +117,22 @@ export const MainEditor = observer(() => {
       <Box position="absolute" top="20px" right="150px">
         {isSavingEditor ? 'Saving...'  : ''}
       </Box>
-      <Flex>
-        {spark?.tags.map((tag) => (<Tag name={tag.name} closeable={false} color="orange" />))}
-      </Flex>
       <Box mt="120px">
       </Box>
       <Flex justify="center" width="100%" height="300px">
         <Box width="65%">
-          <SparkEditor onRegisterEditor={setEditor} width="auto" minHeight="200px" />
+          <Box>
+            <SparkEditor onRegisterEditor={setEditor} width="auto" minHeight="200px" />
+          </Box>
+          <Flex justify="flex-start" flexWrap="wrap">
+            {spark?.tags.map((tag, i) => (
+              <Box key={i} mr="xsm" mt="xsm">
+                <SparkTag tag={tag} spark={spark} />
+              </Box>
+            ))}
+          </Flex>
         </Box>
       </Flex>
-      </Box>
+    </Box>
   )
 })

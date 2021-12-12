@@ -72,12 +72,13 @@ export class TagService {
   }
 
   async deleteTagFromSpark(input: DeleteTagFromSparkInput) {
+    console.log(input, 'deleting?');
     await this.repository
       .createQueryBuilder()
       .delete()
       .from(Spark_X_Tag)
-      .where('spark_id = :id', { id: input.sparkId })
-      .andWhere('tag_id = :id', { id: input.tagId })
+      .where('spark_id = :sparkId', { sparkId: input.sparkId })
+      .andWhere('tag_id = :tagId', { tagId: input.tagId })
       .execute();
   }
 }

@@ -16,8 +16,10 @@ export class SparkService {
   async findAll(): Promise<Spark[]> {
     const sparks = await this.repository.find({
       relations: ['tags'],
+      order: {
+        createdAt: 'DESC',
+      },
     });
-    console.log(sparks, 'sparks');
     return sparks;
   }
 

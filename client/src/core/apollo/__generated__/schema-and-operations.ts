@@ -180,6 +180,13 @@ export type DeleteSparkMutationVariables = Exact<{
 
 export type DeleteSparkMutation = { __typename?: 'Mutation', deleteSpark: { __typename?: 'DeleteSparkPayload', id: string } };
 
+export type DeleteTagFromSparkMutationVariables = Exact<{
+  input: DeleteTagFromSparkInput;
+}>;
+
+
+export type DeleteTagFromSparkMutation = { __typename?: 'Mutation', deleteTagFromSpark: { __typename?: 'DeleteTagFromSparkPayload', deleteTagId: string, relatedSparkId: string } };
+
 export type UpdateSparkMutationVariables = Exact<{
   id: Scalars['ID'];
   doc: Scalars['String'];
@@ -361,6 +368,40 @@ export function useDeleteSparkMutation(baseOptions?: Apollo.MutationHookOptions<
 export type DeleteSparkMutationHookResult = ReturnType<typeof useDeleteSparkMutation>;
 export type DeleteSparkMutationResult = Apollo.MutationResult<DeleteSparkMutation>;
 export type DeleteSparkMutationOptions = Apollo.BaseMutationOptions<DeleteSparkMutation, DeleteSparkMutationVariables>;
+export const DeleteTagFromSparkDocument = gql`
+    mutation deleteTagFromSpark($input: DeleteTagFromSparkInput!) {
+  deleteTagFromSpark(input: $input) {
+    deleteTagId
+    relatedSparkId
+  }
+}
+    `;
+export type DeleteTagFromSparkMutationFn = Apollo.MutationFunction<DeleteTagFromSparkMutation, DeleteTagFromSparkMutationVariables>;
+
+/**
+ * __useDeleteTagFromSparkMutation__
+ *
+ * To run a mutation, you first call `useDeleteTagFromSparkMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteTagFromSparkMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteTagFromSparkMutation, { data, loading, error }] = useDeleteTagFromSparkMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useDeleteTagFromSparkMutation(baseOptions?: Apollo.MutationHookOptions<DeleteTagFromSparkMutation, DeleteTagFromSparkMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<DeleteTagFromSparkMutation, DeleteTagFromSparkMutationVariables>(DeleteTagFromSparkDocument, options);
+      }
+export type DeleteTagFromSparkMutationHookResult = ReturnType<typeof useDeleteTagFromSparkMutation>;
+export type DeleteTagFromSparkMutationResult = Apollo.MutationResult<DeleteTagFromSparkMutation>;
+export type DeleteTagFromSparkMutationOptions = Apollo.BaseMutationOptions<DeleteTagFromSparkMutation, DeleteTagFromSparkMutationVariables>;
 export const UpdateSparkDocument = gql`
     mutation updateSpark($id: ID!, $doc: String!) {
   updateSpark(id: $id, doc: $doc) {

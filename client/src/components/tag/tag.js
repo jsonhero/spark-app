@@ -4,8 +4,8 @@ import { CloseIcon } from '@chakra-ui/icons'
 
 export const Tag = ({ name, color, closeable, ...rest }) => {
   return (
-    <Flex justify="center" align="center" maxWidth="fit-content" minWidth="20px" px="xxsm" py="2px" borderRadius="4px" bg={"#FFBB56"} border="1px solid #EFA433" {...rest}>
-      <Text fontSize="12px">{`#${name}`}</Text>
+    <Flex justify="center" align="center" maxWidth="fit-content" minWidth="20px" px="2px" py="0px" borderRadius="4px" bg={"#E2E8F0"} border="1px solid #CBD5E0" {...rest}>
+      <Text color="#4A5568" fontSize="12px">{`#${name}`}</Text>
       {closeable && <CloseIcon ml="xsm" boxSize="8px" />}
     </Flex>
   )

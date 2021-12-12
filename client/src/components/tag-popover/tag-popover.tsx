@@ -48,26 +48,27 @@ const TagPopoverComponent: React.FC<TagPopoverProps> = ({ tagSuggestionStore }) 
   const activeEditor = globalStore.activeEditors.find((editor) => editor.isActive)
 
   const onCreateTag = useCallback(() => {
-    createTagMutation({
-      variables: {
-        input: {
-          // @ts-ignore
-          name: query,
-          sparkId: activeEditor ? activeEditor.currentlyEditingSpark?.id : null,
-        }
-      },
-      onCompleted({ createTag }) {
-        client.cache.modify({
-          // @ts-ignore
-          id: client.cache.identify(activeEditor.currentlyEditingSpark),
-          fields: {
-            tags(cachedTags) {
-              return [...cachedTags, createTag.createdTag]
-            }
+    if (query.length) {
+      createTagMutation({
+        variables: {
+          input: {
+            name: query,
+            sparkId: activeEditor ? activeEditor.currentlyEditingSpark?.id : null,
           }
-        })
-      }
-    })
+        },
+        onCompleted({ createTag }) {
+          client.cache.modify({
+            // @ts-ignore
+            id: client.cache.identify(activeEditor.currentlyEditingSpark),
+            fields: {
+              tags(cachedTags) {
+                return [...cachedTags, createTag.createdTag]
+              }
+            }
+          })
+        }
+      })
+    }
   }, [activeEditor, query])
 
   const onAddTagToSpark = useCallback((tagId: string, sparkId: string) => {
