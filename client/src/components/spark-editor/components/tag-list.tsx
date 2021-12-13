@@ -93,8 +93,12 @@ export const TagList = forwardRef<SuggestionProps, 'div'>((props, ref) => {
       onCreateTag()
       props.command({})
     } else {
+
       if (activeEditor?.currentlyEditingSpark?.id) {
-        onAddTagToSpark(item.id, activeEditor.currentlyEditingSpark.id)
+        const doesTagExistOnSparkAlready = activeEditor.currentlyEditingSpark.tags.find((tag) => tag.id === item.id)
+        if (!doesTagExistOnSparkAlready) {
+          onAddTagToSpark(item.id, activeEditor.currentlyEditingSpark.id)
+        }
         props.command({})
       }
     }
