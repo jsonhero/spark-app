@@ -158,12 +158,15 @@ export const TagList = forwardRef<SuggestionProps, 'div'>((props, ref) => {
         } else {
           setSelectedIndex(selectedIndex + 1)
         }
+
+        return true
       } else if (event.key === 'ArrowUp') {
         if (selectedIndex === -1 || selectedIndex === 0) {
           setSelectedIndex(listLength - 1)
         } else {
           setSelectedIndex(selectedIndex - 1)
         }
+        return true
       } else if (event.key === 'Enter') {
 
         if (selectedIndex !== -1) {
@@ -174,9 +177,13 @@ export const TagList = forwardRef<SuggestionProps, 'div'>((props, ref) => {
         } else {
           // tagSuggestionStore.setProps(null)
         }
+
+        return true
       } else {
         setSelectedIndex(-1)
       }
+
+      return false
     }
   }))
 

@@ -1,23 +1,16 @@
-import React, { useEffect, useContext, useState } from 'react'
-import { Box, Flex, Button, SimpleGrid, BoxProps } from '@chakra-ui/react'
-import { useEditor, EditorContent, EditorOptions } from "@tiptap/react";
-import StarterKit from "@tiptap/starter-kit"
+import React, { useEffect, useState } from 'react'
+import { Box, BoxProps } from '@chakra-ui/react'
+import { useEditor, EditorContent } from "@tiptap/react";
 import Placeholder, { PlaceholderOptions } from '@tiptap/extension-placeholder'
 import Document from '@tiptap/extension-document'
 import Paragraph from '@tiptap/extension-paragraph'
-import Heading from '@tiptap/extension-heading'
-import { Node } from 'prosemirror-model';
 import Text from '@tiptap/extension-text'
-import { Extension } from '@tiptap/core'
-import { toJS } from 'mobx';
-import _, { isEmpty } from 'lodash'
+import _ from 'lodash'
 
 import { Tag, FixedTitleNode } from './nodes'
 import { tagSuggestions } from './utils'
-import { findTags, extractTextFromJSONDoc } from '@/utils'
-import { Spark } from '@operations'
 import { SparkEditorStore, globalStore } from '@/core/store'
-import { useEventEmitter } from '@/core/hooks'
+import { useEventEmitter, useSpark } from '@/core/hooks'
 import { AppEventType } from '@/core/events'
 import { observer } from 'mobx-react';
 
@@ -25,15 +18,6 @@ import { observer } from 'mobx-react';
 const CustomDocument = Document.extend({
   content: 'fixedtitle block*',
 })
-
-const EscapeBlurExtension = Extension.create({
-  addKeyboardShortcuts() {
-    return {
-      'Escape': () => this.editor.commands.blur()
-    }
-  }
-})
-
 export interface SparkEditorProps extends BoxProps {
   onRegisterEditor?: (editor: SparkEditorStore) => void,
 }
@@ -42,6 +26,9 @@ const SparkEditorComponent: React.FC<SparkEditorProps> = observer(({ onRegisterE
 
   const [sparkEditor] = useState(() => new SparkEditorStore(null))
   const { emit } = useEventEmitter()
+
+  const spark = useSpark(sparkEditor?.currentlyEditingSpark?.id)
+
 
   useEffect(() => {
     globalStore.addActiveEditor(sparkEditor)
@@ -78,7 +65,6 @@ const SparkEditorComponent: React.FC<SparkEditorProps> = observer(({ onRegisterE
           },
           suggestion: tagSuggestions
         }),
-        // EscapeBlurExtension,
         FixedTitleNode
     ],
     content: sparkEditor.currentlyEditingSpark && sparkEditor.currentlyEditingSpark.doc ? sparkEditor.currentlyEditingSpark.doc : '',
@@ -88,9 +74,6 @@ const SparkEditorComponent: React.FC<SparkEditorProps> = observer(({ onRegisterE
         transaction: transaction
       })
 
-      // const tagNodes = findTags(transaction.doc)
-      // const tags = tagNodes.map((node) => node.attrs.id)
-      // sparkEditor.setTags(_.uniq(tags))
     },
     onCreate({ editor }) {
       sparkEditor.setEditor(editor)

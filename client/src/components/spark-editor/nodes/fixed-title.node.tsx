@@ -98,6 +98,8 @@ export const FixedTitleNode = Node.create<TagOptions>({
                     text: textForParagraph
                   })
                 }
+
+                // console.log(endPos, textForParagraph.length)
               
                 this.editor
                   // .can()
@@ -109,7 +111,8 @@ export const FixedTitleNode = Node.create<TagOptions>({
                       content: paragraphContent,
                     },
                   ])
-                  .focus((endPos + 1) - textForParagraph.length)
+                  // breaking in new verison for some reason
+                  // .focus((endPos + 1) - textForParagraph.length)
                   .run()
                   
 
