@@ -77,7 +77,6 @@ export class TagService {
   }
 
   async deleteTagFromSpark(input: DeleteTagFromSparkInput) {
-    console.log(input, 'deleting?');
     await this.repository
       .createQueryBuilder()
       .delete()
@@ -85,5 +84,18 @@ export class TagService {
       .where('spark_id = :sparkId', { sparkId: input.sparkId })
       .andWhere('tag_id = :tagId', { tagId: input.tagId })
       .execute();
+
+    // Remove tag altogether if it's the last
+    const count = await this.connection.rawConnection.createQueryBuilder()
+      .from(Spark_X_Tag, 'spark_x_tag')
+      .where('tag_id = :tagId', { tagId: input.tagId })
+      .distinct()
+      .getCount();
+
+    if (count === 0) {
+      await this.repository.delete({
+        id: input.tagId,
+      });
+    }
   }
 }
