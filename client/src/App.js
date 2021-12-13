@@ -3,7 +3,6 @@ import { ApolloProvider } from "@apollo/client";
 
 import { Layout } from './layout'
 import { apolloClient, theme } from "./core";
-import { EditorPopovers } from '@/containers'
 import { AppEventEmitterProvider } from '@/core/contexts'
 import './App.css';
 
@@ -15,7 +14,6 @@ const App = () => {
             <Box height="100vh">
               <Layout />
             </Box>
-            <EditorPopovers />
           </ChakraProvider>
         </ApolloProvider>
       </AppEventEmitterProvider>

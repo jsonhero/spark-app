@@ -35,7 +35,6 @@ export const Tag = Node.create<TagOptions>({
           if (overrideSpace) {
             range.to += 1
           }
-
           editor
             .chain()
             .focus()
@@ -58,10 +57,10 @@ export const Tag = Node.create<TagOptions>({
           //   .run()
         },
         allow: ({ editor, range }) => {
+
           const $from = editor.state.doc.resolve(range.from)
           const type = editor.schema.nodes[this.name]
           const allow = !!$from.parent.type.contentMatch.matchType(type)
-
           return allow
         },
       },

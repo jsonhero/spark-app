@@ -54,10 +54,11 @@ const SparkEditorComponent: React.FC<SparkEditorProps> = observer(({ onRegisterE
   const editor = useEditor({
     extensions: [
         CustomDocument,
-        Heading.configure({
-          HTMLAttributes: {},
-          levels: [1, 2],
-        }),
+        // Doing something fucky with empty tags
+        // Heading.configure({
+        //   HTMLAttributes: {},
+        //   levels: [1, 2],
+        // }),
         Paragraph,
         Text,
         Placeholder.configure({
@@ -77,7 +78,7 @@ const SparkEditorComponent: React.FC<SparkEditorProps> = observer(({ onRegisterE
           },
           suggestion: tagSuggestions
         }),
-        EscapeBlurExtension,
+        // EscapeBlurExtension,
         FixedTitleNode
     ],
     content: sparkEditor.currentlyEditingSpark && sparkEditor.currentlyEditingSpark.doc ? sparkEditor.currentlyEditingSpark.doc : '',

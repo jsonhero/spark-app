@@ -30,6 +30,7 @@ export const FixedTitleNode = Node.create<TagOptions>({
   renderHTML({ node, HTMLAttributes }) {
     return [
       'h1',
+      { class: 'wat'},
       0
     ]
   },
@@ -80,11 +81,8 @@ export const FixedTitleNode = Node.create<TagOptions>({
               const { $from } = selection
               const nodeParent = $from.parent;
 
-              if (nodeParent.type.name === 'fixedtitle') { 
-              
-
-              
-
+              if (nodeParent.type.name === 'fixedtitle') {
+                console.log('wtf boom!')
                 const endPos = nodeParent.nodeSize
                 const deleteRng: Range = {
                   from: $from.pos,

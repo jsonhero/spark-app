@@ -9,10 +9,8 @@ import {
   useMatch,
 } from "react-location";
 
-import { Header, Sidebar, Main } from './components'
 import { SparksSidebar, MainEditor, MainSidebar } from './containers'
-import { Home, Search } from './routes'
-import { tagPopoverStore, sparksStore, globalStore } from './core/store'
+import { globalStore } from './core/store'
 
 const location = new ReactLocation();
 
