@@ -15,6 +15,8 @@ export type Scalars = {
   Float: number;
   /** A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format. */
   DateTime: any;
+  /** The `JSONObject` scalar type represents JSON objects as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf). */
+  JSONObject: any;
 };
 
 export type AddTagToSparkInput = {
@@ -129,7 +131,7 @@ export type QueryTagsArgs = {
 export type Spark = Node & {
   __typename?: 'Spark';
   createdAt: Scalars['DateTime'];
-  doc?: Maybe<Scalars['String']>;
+  doc?: Maybe<Scalars['JSONObject']>;
   id: Scalars['ID'];
   tags: Array<Tag>;
   updatedAt: Scalars['DateTime'];
@@ -143,6 +145,7 @@ export type Tag = Node & {
   __typename?: 'Tag';
   createdAt: Scalars['DateTime'];
   id: Scalars['ID'];
+  lastUsedAt: Scalars['DateTime'];
   name: Scalars['String'];
   sparks: Array<Spark>;
   updatedAt: Scalars['DateTime'];
@@ -153,30 +156,30 @@ export type UpdateSparkPayload = {
   spark: Spark;
 };
 
-export type GenericSparkFragment = { __typename?: 'Spark', id: string, doc?: string | null | undefined, createdAt: any, updatedAt: any, tags: Array<{ __typename?: 'Tag', id: string, name: string }> };
+export type GenericSparkFragment = { __typename?: 'Spark', id: string, doc?: any | null | undefined, createdAt: any, updatedAt: any, tags: Array<{ __typename?: 'Tag', id: string, name: string, lastUsedAt: any }> };
 
-export type GenericTagFragment = { __typename?: 'Tag', id: string, name: string };
+export type GenericTagFragment = { __typename?: 'Tag', id: string, name: string, lastUsedAt: any };
 
 export type AddTagToSparkMutationVariables = Exact<{
   input: AddTagToSparkInput;
 }>;
 
 
-export type AddTagToSparkMutation = { __typename?: 'Mutation', addTagToSpark: { __typename?: 'AddTagToSparkPayload', addedTag: { __typename?: 'Tag', id: string, name: string } } };
+export type AddTagToSparkMutation = { __typename?: 'Mutation', addTagToSpark: { __typename?: 'AddTagToSparkPayload', addedTag: { __typename?: 'Tag', id: string, name: string, lastUsedAt: any } } };
 
 export type CreateSparkMutationVariables = Exact<{
   input: SparkCreateInput;
 }>;
 
 
-export type CreateSparkMutation = { __typename?: 'Mutation', createSpark: { __typename?: 'Spark', id: string, doc?: string | null | undefined, createdAt: any, updatedAt: any, tags: Array<{ __typename?: 'Tag', id: string, name: string }> } };
+export type CreateSparkMutation = { __typename?: 'Mutation', createSpark: { __typename?: 'Spark', id: string, doc?: any | null | undefined, createdAt: any, updatedAt: any, tags: Array<{ __typename?: 'Tag', id: string, name: string, lastUsedAt: any }> } };
 
 export type CreateTagMutationVariables = Exact<{
   input: CreateTagInput;
 }>;
 
 
-export type CreateTagMutation = { __typename?: 'Mutation', createTag: { __typename?: 'CreateTagPayload', createdTag: { __typename?: 'Tag', id: string, name: string } } };
+export type CreateTagMutation = { __typename?: 'Mutation', createTag: { __typename?: 'CreateTagPayload', createdTag: { __typename?: 'Tag', id: string, name: string, lastUsedAt: any } } };
 
 export type DeleteSparkMutationVariables = Exact<{
   id: Scalars['ID'];
@@ -198,47 +201,47 @@ export type UpdateSparkMutationVariables = Exact<{
 }>;
 
 
-export type UpdateSparkMutation = { __typename?: 'Mutation', updateSpark: { __typename?: 'UpdateSparkPayload', spark: { __typename?: 'Spark', id: string, doc?: string | null | undefined, createdAt: any, updatedAt: any, tags: Array<{ __typename?: 'Tag', id: string, name: string }> } } };
+export type UpdateSparkMutation = { __typename?: 'Mutation', updateSpark: { __typename?: 'UpdateSparkPayload', spark: { __typename?: 'Spark', id: string, doc?: any | null | undefined, createdAt: any, updatedAt: any, tags: Array<{ __typename?: 'Tag', id: string, name: string, lastUsedAt: any }> } } };
 
 export type GetSparkNodeQueryVariables = Exact<{
   id: Scalars['ID'];
 }>;
 
 
-export type GetSparkNodeQuery = { __typename?: 'Query', node?: { __typename?: 'Spark', id: string, doc?: string | null | undefined, createdAt: any, updatedAt: any, tags: Array<{ __typename?: 'Tag', id: string, name: string }> } | { __typename?: 'Tag' } | null | undefined };
+export type GetSparkNodeQuery = { __typename?: 'Query', node?: { __typename?: 'Spark', id: string, doc?: any | null | undefined, createdAt: any, updatedAt: any, tags: Array<{ __typename?: 'Tag', id: string, name: string, lastUsedAt: any }> } | { __typename?: 'Tag' } | null | undefined };
 
 export type GetSparksQueryVariables = Exact<{
   tags?: InputMaybe<Array<Scalars['String']> | Scalars['String']>;
 }>;
 
 
-export type GetSparksQuery = { __typename?: 'Query', sparks: Array<{ __typename?: 'Spark', id: string, doc?: string | null | undefined, createdAt: any, updatedAt: any, tags: Array<{ __typename?: 'Tag', id: string, name: string }> }> };
+export type GetSparksQuery = { __typename?: 'Query', sparks: Array<{ __typename?: 'Spark', id: string, doc?: any | null | undefined, createdAt: any, updatedAt: any, tags: Array<{ __typename?: 'Tag', id: string, name: string, lastUsedAt: any }> }> };
 
 export type GetTagsQueryVariables = Exact<{
   query?: InputMaybe<Scalars['String']>;
 }>;
 
 
-export type GetTagsQuery = { __typename?: 'Query', tags: Array<{ __typename?: 'Tag', id: string, name: string }> };
+export type GetTagsQuery = { __typename?: 'Query', tags: Array<{ __typename?: 'Tag', id: string, name: string, lastUsedAt: any }> };
 
+export const GenericTagFragmentDoc = gql`
+    fragment GenericTag on Tag {
+  id
+  name
+  lastUsedAt
+}
+    `;
 export const GenericSparkFragmentDoc = gql`
     fragment GenericSpark on Spark {
   id
   doc
   tags {
-    id
-    name
+    ...GenericTag
   }
   createdAt
   updatedAt
 }
-    `;
-export const GenericTagFragmentDoc = gql`
-    fragment GenericTag on Tag {
-  id
-  name
-}
-    `;
+    ${GenericTagFragmentDoc}`;
 export const AddTagToSparkDocument = gql`
     mutation addTagToSpark($input: AddTagToSparkInput!) {
   addTagToSpark(input: $input) {

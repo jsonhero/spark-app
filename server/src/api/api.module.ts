@@ -3,7 +3,7 @@ import { Module } from '@nestjs/common';
 import { ServiceModule } from '@service';
 import { NodeResolver, SparkResolver, TagResolver, FolderEntryResolver, FolderResolver } from '@resolvers';
 
-const resolvers = [SparkResolver, TagResolver, FolderEntryResolver, FolderResolver];
+const resolvers = [NodeResolver, SparkResolver, TagResolver, FolderEntryResolver, FolderResolver];
 
 @Module({
   imports: [ServiceModule],

@@ -113,10 +113,10 @@ export const FixedTitleNode = Node.create<TagOptions>({
                   ])
                   // breaking in new verison for some reason
                   // .focus((endPos + 1) - textForParagraph.length)
+                  // .focus('end')
                   .run()
+                  this.editor.commands.focus((endPos + 1) - textForParagraph.length)
                   
-
-                  // this.editor.commands.focus('end')
                 return true;
               }
             }

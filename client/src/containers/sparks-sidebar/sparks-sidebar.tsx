@@ -57,7 +57,7 @@ export const SparksSidebarComponent: React.FC<SparksSidebarProps> = ({
 
   const [onDeleteSpark, {}] = useDeleteSpark()
 
-  if (loading) { return null }
+  // if (loading) { return null }
 
   return (
     <Box height="100vh" minWidth="300px" width="300px" bg="#FDFDFD" borderRight="1px solid" borderColor="gray_2">

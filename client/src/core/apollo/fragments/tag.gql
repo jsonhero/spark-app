@@ -1,4 +1,5 @@
 fragment GenericTag on Tag {
   id
   name
+  lastUsedAt
 }

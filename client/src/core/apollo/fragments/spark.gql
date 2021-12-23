@@ -2,8 +2,7 @@ fragment GenericSpark on Spark {
   id
   doc
   tags {
-    id
-    name
+    ...GenericTag
   }
   createdAt
   updatedAt 
