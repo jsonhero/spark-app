@@ -4,7 +4,7 @@ import { Inject, forwardRef } from '@nestjs/common';
 
 import { ResolvedGlobalId, fromGlobalId } from '@graph/utils';
 import { Node } from '../../graph';
-import { Spark } from '@entity';
+import { Spark } from '../../../entity';
 import { SparkService } from '@service';
 
 @Resolver('Node')

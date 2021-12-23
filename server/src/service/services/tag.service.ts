@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { Repository, ILike, FindManyOptions } from 'typeorm';
+import { Repository, ILike, FindManyOptions, Raw } from 'typeorm';
 
 import { DbConnection } from '../../db';
 import { Spark, Tag, Spark_X_Tag } from '@entity';
@@ -24,7 +24,7 @@ export class TagService {
   findAll({ query = null }: { query?: string }): Promise<Tag[]> {
     let options: FindManyOptions<Tag> = {
       order: {
-        createdAt: 'DESC',
+        lastUsedAt: 'DESC',
       },
     };
 
@@ -73,6 +73,12 @@ export class TagService {
       })
       .execute();
 
+    await this.repository.createQueryBuilder()
+      .update()
+      .set({ lastUsedAt: () => 'now()' })
+      .where('id = :id', { id: input.tagId })
+      .execute();
+
     return tagToReceiveSpark;
   }
 
@@ -86,7 +92,8 @@ export class TagService {
       .execute();
 
     // Remove tag altogether if it's the last
-    const count = await this.connection.rawConnection.createQueryBuilder()
+    const count = await this.connection.rawConnection
+      .createQueryBuilder()
       .from(Spark_X_Tag, 'spark_x_tag')
       .where('tag_id = :tagId', { tagId: input.tagId })
       .distinct()

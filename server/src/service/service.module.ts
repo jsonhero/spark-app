@@ -2,9 +2,9 @@ import { Global, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { DbModule } from '../db';
-import { SparkService, TagService } from './services';
+import { SparkService, TagService, FolderEntryService } from './services';
 
-const services = [SparkService, TagService];
+const services = [SparkService, TagService, FolderEntryService];
 
 @Global()
 @Module({

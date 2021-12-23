@@ -28,6 +28,14 @@ export class Tag implements Node {
   name: string;
 
   @Field()
+  @Column({
+    name: 'last_used_at',
+    type: 'timestamptz',
+    default: () => 'CURRENT_TIMESTAMP',
+  })
+  lastUsedAt: Date;
+
+  @Field()
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
 
