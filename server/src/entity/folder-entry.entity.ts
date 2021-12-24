@@ -38,9 +38,13 @@ export class FolderEntry {
   })
   entityType: string;
 
-  @Field()
-  @Column()
-  order: number;
+  // https://www.zimmi.cz/posts/2018/implementing-linked-list-with-postgresql-recursive-cte/
+  @Column({
+    type: 'uuid',
+    name: 'next_id',
+    nullable: true,
+  })
+  nextId: string;
 
   @Field()
   @CreateDateColumn({ name: 'created_at' })

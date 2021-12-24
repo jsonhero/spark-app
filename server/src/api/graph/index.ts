@@ -9,4 +9,7 @@ export { CreateTagPayload } from './create-tag.payload';
 export { AddTagToSparkPayload } from './add-tag-to-spark.payload';
 export { DeleteTagFromSparkInput } from './delete-tag-from-spark.input';
 export { DeleteTagFromSparkPayload } from './delete-tag-from-spark.payload';
-export { FolderEntryEntityUnion } from './folder-entry-entity.union'
+export { FolderEntryEntityUnion } from './folder-entry-entity.union';
+export { AddFolderEntryInput } from './add-folder-entry.input';
+export { AddFolderEntryPayload } from './add-folder-entry.payload';
+export { RemoveFolderEntryPayload } from './remove-folder-entry.payload';

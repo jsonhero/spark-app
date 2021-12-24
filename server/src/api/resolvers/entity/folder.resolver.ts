@@ -10,6 +10,7 @@ import {
 
 import { FolderEntryService } from '@service';
 import { Folder, FolderEntry } from '@entity';
+import { toGlobalId, fromGlobalId } from '@graph/utils';
 
 @Resolver(() => Folder)
 export class FolderResolver {
@@ -18,8 +19,18 @@ export class FolderResolver {
     ) {}
 
 
+  @Query(() => Folder)
+  public async folderTree(): Promise<Folder> {
+    return this.folderEntryService.getRootFolder();
+  }
+
   @ResolveField(() => [FolderEntry])
   entries(@Parent() folder: Folder): Promise<FolderEntry[]> {
     return this.folderEntryService.getFolderEntries(folder.id);
+  }
+
+  @ResolveField()
+  id(@Parent() folder: Folder): string {
+    return toGlobalId(Folder.name, folder.id);
   }
 }

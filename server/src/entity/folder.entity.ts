@@ -11,16 +11,20 @@ import {
 } from 'typeorm';
 import { Field, ID, ObjectType } from '@nestjs/graphql';
 
+import { Node } from '../api/graph';
 import { FolderEntry } from './folder-entry.entity';
 
-@ObjectType()
+@ObjectType({
+  implements: Node
+})
 @Entity({ name: 'folder' })
-export class Folder {
+export class Folder implements Node {
   @Field(() => ID)
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
 
+  @Field()
   @Column({
     type: 'boolean',
     name: 'is_root',

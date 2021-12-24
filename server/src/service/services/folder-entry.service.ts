@@ -23,6 +23,12 @@ export class FolderEntryService {
     })
   }
 
+  public async getRootFolder(): Promise<Folder> {
+    return this.connection.getRepository(Folder).findOne({
+      isRoot: true,
+    })
+  }
+
   public async getFolderEntries(folderId: string): Promise<FolderEntry[]> {
     return this.repository.find({
       relations: ['folder'],
@@ -30,12 +36,41 @@ export class FolderEntryService {
         folder: {
           id: folderId,
         }
+      },
+      order: {
+        updatedAt: 'ASC'
       }
     })
   }
 
   public async getFolderById(id: string): Promise<Folder> {
     return this.connection.getRepository(Folder).findOne(id)
+  }
+
+  public async createFolder(name: string): Promise<Folder> {
+    const newFolder = this.connection.getRepository(Folder).create({
+      name,
+    })
+
+    return this.connection.getRepository(Folder).save(newFolder)
+  }
+
+  public async addFolderEntry(entityId: string, entityType: string, folderId: string) {
+    const newFolderEntry = this.repository.create({
+      entityId,
+      entityType,
+      folder: {
+        id: folderId,
+      }
+    });
+
+    return this.repository.save(newFolderEntry);
+  }
+
+  public async removeFolderEntry(folderEntryId: string) {
+    this.repository.delete({
+      id: folderEntryId,
+    })
   }
 
 

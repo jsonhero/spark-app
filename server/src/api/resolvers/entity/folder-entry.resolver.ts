@@ -10,7 +10,8 @@ import {
 
 import { FolderEntryService, SparkService} from '@service';
 import { FolderEntry } from '@entity';
-import { FolderEntryEntityUnion } from '../../graph'
+import { FolderEntryEntityUnion, AddFolderEntryInput, AddFolderEntryPayload, RemoveFolderEntryPayload } from '../../graph'
+import { toGlobalId, fromGlobalId } from '@graph/utils';
 
 @Resolver(() => FolderEntry)
 export class FolderEntryResolver {
@@ -23,6 +24,30 @@ export class FolderEntryResolver {
   @Query(() => [FolderEntry])
   public async folderEntries(): Promise<FolderEntry[]> {
     return this.folderEntryService.getRootFolderEntries()
+  }
+
+  @Mutation(() => AddFolderEntryPayload)
+  public async addFolderEntry(
+    @Args('input') input: AddFolderEntryInput
+  ): Promise<AddFolderEntryPayload> {
+    const parsedEntityId = fromGlobalId(input.entityId);
+    const addedEntry = await this.folderEntryService.addFolderEntry(parsedEntityId.id, parsedEntityId.type, fromGlobalId(input.folderId).id);
+
+    return {
+      addedEntry,
+    }
+  }
+
+  @Mutation(() => RemoveFolderEntryPayload)
+  public async removeFolderEntry(
+    @Args({ name: 'id', type: () => ID }) id: string,
+  ): Promise<RemoveFolderEntryPayload> {
+    const resolvedGlobalId = fromGlobalId(id);
+    await this.folderEntryService.removeFolderEntry(resolvedGlobalId.id)
+    
+    return {
+      removedFolderEntryId: resolvedGlobalId.id,
+    }
   }
 
   @ResolveField(() => FolderEntryEntityUnion)
