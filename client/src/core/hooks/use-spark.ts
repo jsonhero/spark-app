@@ -3,7 +3,7 @@ import { useGetSparkNodeQuery, GetSparkNodeQuery, GenericSparkFragment } from '@
 import { QueryHookOptions, OperationVariables } from '@apollo/client';
 
 
-export function useSpark(sparkId: string | undefined): GenericSparkFragment | null {
+export function useSpark(sparkId: string | undefined | null): GenericSparkFragment | null {
   const variables = useMemo(() => {
     if (!sparkId) return undefined
     return {

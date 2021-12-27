@@ -18,6 +18,7 @@ import { useApolloClient } from '@apollo/client'
 
 import { GenericTagFragment, useCreateTagMutation, useGetTagsQuery, useAddTagToSparkMutation } from '@operations'
 import { globalStore, TagSuggestionStore } from '@/core/store'
+import { useSpark } from '@/core/hooks'
 
 interface TagListProps extends SuggestionProps, FlexProps {
 
@@ -41,6 +42,7 @@ export const TagList = forwardRef<SuggestionProps, 'div'>((props, ref) => {
   const [addTagToSparkMutation, {}] = useAddTagToSparkMutation()
 
   const activeEditor = globalStore.activeEditors.find((editor) => editor.isActive)
+  const spark = useSpark(activeEditor?.currentlyEditingSparkId)
 
   const onCreateTag = useCallback(() => {
     if (props.query.length) {
@@ -48,13 +50,13 @@ export const TagList = forwardRef<SuggestionProps, 'div'>((props, ref) => {
         variables: {
           input: {
             name: props.query,
-            sparkId: activeEditor ? activeEditor.currentlyEditingSpark?.id : null,
+            sparkId: spark ? spark.id : null,
           }
         },
         onCompleted({ createTag }) {
           client.cache.modify({
             // @ts-ignore
-            id: client.cache.identify(activeEditor.currentlyEditingSpark),
+            id: client.cache.identify(spark),
             fields: {
               tags(cachedTags) {
                 return [...cachedTags, createTag.createdTag]
@@ -64,7 +66,7 @@ export const TagList = forwardRef<SuggestionProps, 'div'>((props, ref) => {
         }
       })
     }
-  }, [activeEditor, props.query])
+  }, [spark, props.query])
 
   const onAddTagToSpark = useCallback((tagId: string, sparkId: string) => {
     addTagToSparkMutation({
@@ -77,7 +79,7 @@ export const TagList = forwardRef<SuggestionProps, 'div'>((props, ref) => {
       onCompleted({ addTagToSpark  }) {
         client.cache.modify({
           // @ts-ignore
-          id: client.cache.identify(activeEditor.currentlyEditingSpark),
+          id: client.cache.identify(spark),
           fields: {
             tags(cachedTags) {
               return [...cachedTags, addTagToSpark.addedTag]
@@ -86,7 +88,7 @@ export const TagList = forwardRef<SuggestionProps, 'div'>((props, ref) => {
         })
       }
     })
-  }, [activeEditor])
+  }, [spark])
 
   const onItemClick = useCallback((item: GenericTagFragment | null) => {
     if (item === null) {
@@ -94,16 +96,16 @@ export const TagList = forwardRef<SuggestionProps, 'div'>((props, ref) => {
       props.command({})
     } else {
 
-      if (activeEditor?.currentlyEditingSpark?.id) {
-        const doesTagExistOnSparkAlready = activeEditor.currentlyEditingSpark.tags.find((tag) => tag.id === item.id)
+      if (spark) {
+        const doesTagExistOnSparkAlready = spark.tags.find((tag) => tag.id === item.id)
         if (!doesTagExistOnSparkAlready) {
-          onAddTagToSpark(item.id, activeEditor.currentlyEditingSpark.id)
+          onAddTagToSpark(item.id, spark.id)
         }
         props.command({})
       }
     }
 
-  }, [activeEditor?.currentlyEditingSpark?.id, onCreateTag])
+  }, [spark, onCreateTag])
 
   const listItems: (GenericTagFragment | null)[] = useMemo(() => {
     const items = [];

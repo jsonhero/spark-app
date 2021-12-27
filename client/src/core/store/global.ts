@@ -43,7 +43,6 @@ export class GlobalStore  {
   }
 
   removeSearchFilter(filter: SearchFilterEntry): void {
-    console.log('remove', filter)
     const matches = _.remove(this.searchFilters, (o) => !_.isMatch(o, filter))
     this.searchFilters = matches
   }
@@ -59,6 +58,13 @@ export class GlobalStore  {
 
   removeActiveEditor(editorId: string) {
     this.activeEditors = this.activeEditors.filter((editor) => editor.id !== editorId)
+  }
+
+  openSparkInActiveEditor(sparkId: string) {
+    if (this.activeEditors.length) {
+      const activeEditor = this.activeEditors[0];
+      activeEditor.setCurrentlyEditingSparkId(sparkId)
+    }
   }
 
 }

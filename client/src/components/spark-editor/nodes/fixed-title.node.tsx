@@ -82,7 +82,6 @@ export const FixedTitleNode = Node.create<TagOptions>({
               const nodeParent = $from.parent;
 
               if (nodeParent.type.name === 'fixedtitle') {
-                console.log('wtf boom!')
                 const endPos = nodeParent.nodeSize
                 const deleteRng: Range = {
                   from: $from.pos,

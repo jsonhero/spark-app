@@ -17,7 +17,7 @@ export const useDeleteSpark = (options?: DeleteSparkMutationOptions): [(sparkId:
           sparks: data.sparks.filter((spark: Spark) => spark.id !== sparkId)
         }))
 
-        const activeEditor = globalStore.activeEditors.find((editor) => editor.currentlyEditingSpark?.id === sparkId)
+        const activeEditor = globalStore.activeEditors.find((editor) => editor.currentlyEditingSparkId === sparkId)
         if (activeEditor) {
           activeEditor.clearCurrentlyEditingSpark()
         }

@@ -1,0 +1,30 @@
+query getFolders {
+  folderTree {
+    id
+    name
+    entries {
+      id
+      entity {
+        ... on Spark {
+          ...GenericSpark
+        }
+        ... on Folder {
+          id
+          name
+          entries {
+             id
+             entity {
+               ... on Spark {
+                 ...GenericSpark
+               }
+               ... on Folder {
+                 id
+                 name
+               }
+             }
+          }
+        }
+      }
+    }
+  }
+}

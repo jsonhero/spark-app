@@ -39,19 +39,19 @@ export const MainEditor = observer(() => {
     
   })
 
-  const spark = useSpark(sparkEditor?.currentlyEditingSpark?.id)
+  const spark = useSpark(sparkEditor?.currentlyEditingSparkId)
 
   const saveEditor = useCallback((docJson) => {
     console.log("Attempting to save...")
-    if (sparkEditor?.currentlyEditingSpark) {
+    if (spark) {
       updateSparkMutation({
         variables: {
-          id: sparkEditor.currentlyEditingSpark.id,
+          id: spark.id,
           doc: JSON.stringify(docJson)
         }
       })
     }
-  }, [sparkEditor])
+  }, [spark])
 
 
   const saveEditorThrottled = useThrottle(saveEditor, 2000)  
@@ -79,15 +79,15 @@ export const MainEditor = observer(() => {
               sparks: [completedData.createSpark, ...data.sparks]
             }))
             if (sparkEditor) {
-              sparkEditor.setCurrentlyEditingSpark(completedData.createSpark, true)
+              sparkEditor.setCurrentlyEditingSparkId(completedData.createSpark.id, true)
             }
           }
         })
-      } else if (!isPreviouslyEmpty && isEmpty && sparkEditor?.currentlyEditingSpark?.id) {
-        onDeleteSpark(sparkEditor?.currentlyEditingSpark?.id)
-      } else if (sparkEditor?.currentlyEditingSpark) {
+      } else if (!isPreviouslyEmpty && isEmpty && sparkEditor?.currentlyEditingSparkId) {
+        onDeleteSpark(sparkEditor?.currentlyEditingSparkId)
+      } else if (sparkEditor?.currentlyEditingSparkId && spark) {
         client.cache.modify({
-          id: client.cache.identify(sparkEditor?.currentlyEditingSpark),
+          id: client.cache.identify(spark),
           fields: {
             doc(cachedDoc) {
               return editor.getJSON()
@@ -101,7 +101,7 @@ export const MainEditor = observer(() => {
   })
 
   useListener(AppEventType.switchEditor, (event) => {
-    sparkEditor?.setCurrentlyEditingSpark(event.spark, false)
+    sparkEditor?.setCurrentlyEditingSparkId(event.spark.id, false)
   }, [sparkEditor])
 
   const setEditor = (editor: SparkEditorStore) => {    

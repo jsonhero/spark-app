@@ -18,13 +18,7 @@ export class FolderEntryResolver {
   constructor(
     private readonly folderEntryService: FolderEntryService,
     private readonly sparkService: SparkService, 
-    ) {}
-
-
-  @Query(() => [FolderEntry])
-  public async folderEntries(): Promise<FolderEntry[]> {
-    return this.folderEntryService.getRootFolderEntries()
-  }
+  ) {}
 
   @Mutation(() => AddFolderEntryPayload)
   public async addFolderEntry(

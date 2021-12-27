@@ -27,7 +27,7 @@ const SparkEditorComponent: React.FC<SparkEditorProps> = observer(({ onRegisterE
   const [sparkEditor] = useState(() => new SparkEditorStore(null))
   const { emit } = useEventEmitter()
 
-  const spark = useSpark(sparkEditor?.currentlyEditingSpark?.id)
+  const spark = useSpark(sparkEditor?.currentlyEditingSparkId)
 
 
   useEffect(() => {
@@ -67,7 +67,7 @@ const SparkEditorComponent: React.FC<SparkEditorProps> = observer(({ onRegisterE
         }),
         FixedTitleNode
     ],
-    content: sparkEditor.currentlyEditingSpark && sparkEditor.currentlyEditingSpark.doc ? sparkEditor.currentlyEditingSpark.doc : '',
+    content: spark && spark.doc ? spark.doc : '',
     onUpdate({ transaction, editor }) {
       emit(AppEventType.updateEditor, {
         editorStore: sparkEditor,
@@ -90,7 +90,7 @@ const SparkEditorComponent: React.FC<SparkEditorProps> = observer(({ onRegisterE
     onFocus() {
       sparkEditor.setActive(true)
     }
-  }, [sparkEditor.currentlyEditingSpark?.id]);
+  }, [spark?.id]);
 
   return (
     <Box height="min-content" onClick={() => {

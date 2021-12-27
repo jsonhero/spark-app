@@ -19,6 +19,16 @@ export type Scalars = {
   JSONObject: any;
 };
 
+export type AddFolderEntryInput = {
+  entityId: Scalars['ID'];
+  folderId: Scalars['ID'];
+};
+
+export type AddFolderEntryPayload = {
+  __typename?: 'AddFolderEntryPayload';
+  addedEntry: FolderEntry;
+};
+
 export type AddTagToSparkInput = {
   sparkId: Scalars['ID'];
   tagId: Scalars['ID'];
@@ -55,14 +65,43 @@ export type DeleteTagFromSparkPayload = {
   relatedSparkId: Scalars['ID'];
 };
 
+export type Folder = Node & {
+  __typename?: 'Folder';
+  createdAt: Scalars['DateTime'];
+  entries: Array<FolderEntry>;
+  id: Scalars['ID'];
+  isRoot: Scalars['Boolean'];
+  name: Scalars['String'];
+  updatedAt: Scalars['DateTime'];
+};
+
+export type FolderEntry = {
+  __typename?: 'FolderEntry';
+  createdAt: Scalars['DateTime'];
+  entity: FolderEntryEntityUnion;
+  entityType: Scalars['String'];
+  folder: Folder;
+  id: Scalars['ID'];
+  updatedAt: Scalars['DateTime'];
+};
+
+export type FolderEntryEntityUnion = Folder | Spark;
+
 export type Mutation = {
   __typename?: 'Mutation';
+  addFolderEntry: AddFolderEntryPayload;
   addTagToSpark: AddTagToSparkPayload;
   createSpark: Spark;
   createTag: CreateTagPayload;
   deleteSpark: DeleteSparkPayload;
   deleteTagFromSpark: DeleteTagFromSparkPayload;
+  removeFolderEntry: RemoveFolderEntryPayload;
   updateSpark: UpdateSparkPayload;
+};
+
+
+export type MutationAddFolderEntryArgs = {
+  input: AddFolderEntryInput;
 };
 
 
@@ -91,6 +130,11 @@ export type MutationDeleteTagFromSparkArgs = {
 };
 
 
+export type MutationRemoveFolderEntryArgs = {
+  id: Scalars['ID'];
+};
+
+
 export type MutationUpdateSparkArgs = {
   doc: Scalars['String'];
   id: Scalars['ID'];
@@ -102,6 +146,7 @@ export type Node = {
 
 export type Query = {
   __typename?: 'Query';
+  folderTree: Folder;
   node?: Maybe<Node>;
   nodes: Array<Node>;
   sparks: Array<Spark>;
@@ -126,6 +171,11 @@ export type QuerySparksArgs = {
 
 export type QueryTagsArgs = {
   query?: InputMaybe<Scalars['String']>;
+};
+
+export type RemoveFolderEntryPayload = {
+  __typename?: 'RemoveFolderEntryPayload';
+  removedFolderEntryId: Scalars['ID'];
 };
 
 export type Spark = Node & {
@@ -203,12 +253,17 @@ export type UpdateSparkMutationVariables = Exact<{
 
 export type UpdateSparkMutation = { __typename?: 'Mutation', updateSpark: { __typename?: 'UpdateSparkPayload', spark: { __typename?: 'Spark', id: string, doc?: any | null | undefined, createdAt: any, updatedAt: any, tags: Array<{ __typename?: 'Tag', id: string, name: string, lastUsedAt: any }> } } };
 
+export type GetFoldersQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetFoldersQuery = { __typename?: 'Query', folderTree: { __typename?: 'Folder', id: string, name: string, entries: Array<{ __typename?: 'FolderEntry', id: string, entity: { __typename?: 'Folder', id: string, name: string, entries: Array<{ __typename?: 'FolderEntry', id: string, entity: { __typename?: 'Folder', id: string, name: string } | { __typename?: 'Spark', id: string, doc?: any | null | undefined, createdAt: any, updatedAt: any, tags: Array<{ __typename?: 'Tag', id: string, name: string, lastUsedAt: any }> } }> } | { __typename?: 'Spark', id: string, doc?: any | null | undefined, createdAt: any, updatedAt: any, tags: Array<{ __typename?: 'Tag', id: string, name: string, lastUsedAt: any }> } }> } };
+
 export type GetSparkNodeQueryVariables = Exact<{
   id: Scalars['ID'];
 }>;
 
 
-export type GetSparkNodeQuery = { __typename?: 'Query', node?: { __typename?: 'Spark', id: string, doc?: any | null | undefined, createdAt: any, updatedAt: any, tags: Array<{ __typename?: 'Tag', id: string, name: string, lastUsedAt: any }> } | { __typename?: 'Tag' } | null | undefined };
+export type GetSparkNodeQuery = { __typename?: 'Query', node?: { __typename?: 'Folder' } | { __typename?: 'Spark', id: string, doc?: any | null | undefined, createdAt: any, updatedAt: any, tags: Array<{ __typename?: 'Tag', id: string, name: string, lastUsedAt: any }> } | { __typename?: 'Tag' } | null | undefined };
 
 export type GetSparksQueryVariables = Exact<{
   tags?: InputMaybe<Array<Scalars['String']> | Scalars['String']>;
@@ -448,6 +503,65 @@ export function useUpdateSparkMutation(baseOptions?: Apollo.MutationHookOptions<
 export type UpdateSparkMutationHookResult = ReturnType<typeof useUpdateSparkMutation>;
 export type UpdateSparkMutationResult = Apollo.MutationResult<UpdateSparkMutation>;
 export type UpdateSparkMutationOptions = Apollo.BaseMutationOptions<UpdateSparkMutation, UpdateSparkMutationVariables>;
+export const GetFoldersDocument = gql`
+    query getFolders {
+  folderTree {
+    id
+    name
+    entries {
+      id
+      entity {
+        ... on Spark {
+          ...GenericSpark
+        }
+        ... on Folder {
+          id
+          name
+          entries {
+            id
+            entity {
+              ... on Spark {
+                ...GenericSpark
+              }
+              ... on Folder {
+                id
+                name
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+    ${GenericSparkFragmentDoc}`;
+
+/**
+ * __useGetFoldersQuery__
+ *
+ * To run a query within a React component, call `useGetFoldersQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetFoldersQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetFoldersQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetFoldersQuery(baseOptions?: Apollo.QueryHookOptions<GetFoldersQuery, GetFoldersQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetFoldersQuery, GetFoldersQueryVariables>(GetFoldersDocument, options);
+      }
+export function useGetFoldersLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetFoldersQuery, GetFoldersQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetFoldersQuery, GetFoldersQueryVariables>(GetFoldersDocument, options);
+        }
+export type GetFoldersQueryHookResult = ReturnType<typeof useGetFoldersQuery>;
+export type GetFoldersLazyQueryHookResult = ReturnType<typeof useGetFoldersLazyQuery>;
+export type GetFoldersQueryResult = Apollo.QueryResult<GetFoldersQuery, GetFoldersQueryVariables>;
 export const GetSparkNodeDocument = gql`
     query getSparkNode($id: ID!) {
   node(id: $id) {
