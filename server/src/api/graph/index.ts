@@ -13,3 +13,5 @@ export { FolderEntryEntityUnion } from './folder-entry-entity.union';
 export { AddFolderEntryInput } from './add-folder-entry.input';
 export { AddFolderEntryPayload } from './add-folder-entry.payload';
 export { RemoveFolderEntryPayload } from './remove-folder-entry.payload';
+export { CreateFolderInput } from './create-folder.input';
+export { CreateFolderPayload } from './create-folder.payload';

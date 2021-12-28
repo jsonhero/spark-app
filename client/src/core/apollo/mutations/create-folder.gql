@@ -1,0 +1,13 @@
+mutation createFolder($input: CreateFolderInput!) {
+  createFolder(input: $input) {
+    folderEntry {
+      id
+      entity {
+        ... on Folder {
+          id
+          name
+        }
+      }
+    }
+  }
+}

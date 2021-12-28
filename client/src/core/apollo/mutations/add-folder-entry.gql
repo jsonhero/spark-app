@@ -1,0 +1,16 @@
+mutation addFolderEntry($input: AddFolderEntryInput!) {
+  addFolderEntry(input: $input) {
+    addedEntry {
+      id
+      entity {
+        ... on Folder {
+          id
+          name
+        }
+        ... on Spark {
+          ...GenericSpark
+        }
+      }
+    }
+  }
+}

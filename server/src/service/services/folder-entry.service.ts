@@ -47,15 +47,18 @@ export class FolderEntryService {
     return this.connection.getRepository(Folder).findOne(id)
   }
 
-  public async createFolder(name: string): Promise<Folder> {
+  public async createFolderInParent(name: string, parentFolderId: string): Promise<FolderEntry> {
     const newFolder = this.connection.getRepository(Folder).create({
       name,
     })
 
-    return this.connection.getRepository(Folder).save(newFolder)
+
+    const createdFolder = await this.connection.getRepository(Folder).save(newFolder)
+
+    return this.addFolderEntry(createdFolder.id, 'folder', parentFolderId)
   }
 
-  public async addFolderEntry(entityId: string, entityType: string, folderId: string) {
+  public async addFolderEntry(entityId: string, entityType: string, folderId: string): Promise<FolderEntry> {
     const newFolderEntry = this.repository.create({
       entityId,
       entityType,
@@ -72,6 +75,5 @@ export class FolderEntryService {
       id: folderEntryId,
     })
   }
-
 
 }

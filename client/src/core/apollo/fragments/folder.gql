@@ -1,0 +1,5 @@
+fragment GenericFolder on Folder {
+  id
+  name
+  isRoot
+}

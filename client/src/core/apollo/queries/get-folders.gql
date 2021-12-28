@@ -1,7 +1,6 @@
 query getFolders {
   folderTree {
-    id
-    name
+    ...GenericFolder
     entries {
       id
       entity {
@@ -9,8 +8,7 @@ query getFolders {
           ...GenericSpark
         }
         ... on Folder {
-          id
-          name
+          ...GenericFolder
           entries {
              id
              entity {
@@ -18,8 +16,10 @@ query getFolders {
                  ...GenericSpark
                }
                ... on Folder {
-                 id
-                 name
+                 ...GenericFolder
+                 entries {
+                    id
+                 }
                }
              }
           }

@@ -39,6 +39,16 @@ export type AddTagToSparkPayload = {
   addedTag: Tag;
 };
 
+export type CreateFolderInput = {
+  name: Scalars['String'];
+  parentFolderId: Scalars['ID'];
+};
+
+export type CreateFolderPayload = {
+  __typename?: 'CreateFolderPayload';
+  folderEntry: FolderEntry;
+};
+
 export type CreateTagInput = {
   name: Scalars['String'];
   sparkId?: InputMaybe<Scalars['ID']>;
@@ -91,6 +101,7 @@ export type Mutation = {
   __typename?: 'Mutation';
   addFolderEntry: AddFolderEntryPayload;
   addTagToSpark: AddTagToSparkPayload;
+  createFolder: CreateFolderPayload;
   createSpark: Spark;
   createTag: CreateTagPayload;
   deleteSpark: DeleteSparkPayload;
@@ -107,6 +118,11 @@ export type MutationAddFolderEntryArgs = {
 
 export type MutationAddTagToSparkArgs = {
   input: AddTagToSparkInput;
+};
+
+
+export type MutationCreateFolderArgs = {
+  input: CreateFolderInput;
 };
 
 
@@ -206,9 +222,18 @@ export type UpdateSparkPayload = {
   spark: Spark;
 };
 
+export type GenericFolderFragment = { __typename?: 'Folder', id: string, name: string, isRoot: boolean };
+
 export type GenericSparkFragment = { __typename?: 'Spark', id: string, doc?: any | null | undefined, createdAt: any, updatedAt: any, tags: Array<{ __typename?: 'Tag', id: string, name: string, lastUsedAt: any }> };
 
 export type GenericTagFragment = { __typename?: 'Tag', id: string, name: string, lastUsedAt: any };
+
+export type AddFolderEntryMutationVariables = Exact<{
+  input: AddFolderEntryInput;
+}>;
+
+
+export type AddFolderEntryMutation = { __typename?: 'Mutation', addFolderEntry: { __typename?: 'AddFolderEntryPayload', addedEntry: { __typename?: 'FolderEntry', id: string, entity: { __typename?: 'Folder', id: string, name: string } | { __typename?: 'Spark', id: string, doc?: any | null | undefined, createdAt: any, updatedAt: any, tags: Array<{ __typename?: 'Tag', id: string, name: string, lastUsedAt: any }> } } } };
 
 export type AddTagToSparkMutationVariables = Exact<{
   input: AddTagToSparkInput;
@@ -216,6 +241,13 @@ export type AddTagToSparkMutationVariables = Exact<{
 
 
 export type AddTagToSparkMutation = { __typename?: 'Mutation', addTagToSpark: { __typename?: 'AddTagToSparkPayload', addedTag: { __typename?: 'Tag', id: string, name: string, lastUsedAt: any } } };
+
+export type CreateFolderMutationVariables = Exact<{
+  input: CreateFolderInput;
+}>;
+
+
+export type CreateFolderMutation = { __typename?: 'Mutation', createFolder: { __typename?: 'CreateFolderPayload', folderEntry: { __typename?: 'FolderEntry', id: string, entity: { __typename?: 'Folder', id: string, name: string } | { __typename?: 'Spark' } } } };
 
 export type CreateSparkMutationVariables = Exact<{
   input: SparkCreateInput;
@@ -256,7 +288,7 @@ export type UpdateSparkMutation = { __typename?: 'Mutation', updateSpark: { __ty
 export type GetFoldersQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetFoldersQuery = { __typename?: 'Query', folderTree: { __typename?: 'Folder', id: string, name: string, entries: Array<{ __typename?: 'FolderEntry', id: string, entity: { __typename?: 'Folder', id: string, name: string, entries: Array<{ __typename?: 'FolderEntry', id: string, entity: { __typename?: 'Folder', id: string, name: string } | { __typename?: 'Spark', id: string, doc?: any | null | undefined, createdAt: any, updatedAt: any, tags: Array<{ __typename?: 'Tag', id: string, name: string, lastUsedAt: any }> } }> } | { __typename?: 'Spark', id: string, doc?: any | null | undefined, createdAt: any, updatedAt: any, tags: Array<{ __typename?: 'Tag', id: string, name: string, lastUsedAt: any }> } }> } };
+export type GetFoldersQuery = { __typename?: 'Query', folderTree: { __typename?: 'Folder', id: string, name: string, isRoot: boolean, entries: Array<{ __typename?: 'FolderEntry', id: string, entity: { __typename?: 'Folder', id: string, name: string, isRoot: boolean, entries: Array<{ __typename?: 'FolderEntry', id: string, entity: { __typename?: 'Folder', id: string, name: string, isRoot: boolean, entries: Array<{ __typename?: 'FolderEntry', id: string }> } | { __typename?: 'Spark', id: string, doc?: any | null | undefined, createdAt: any, updatedAt: any, tags: Array<{ __typename?: 'Tag', id: string, name: string, lastUsedAt: any }> } }> } | { __typename?: 'Spark', id: string, doc?: any | null | undefined, createdAt: any, updatedAt: any, tags: Array<{ __typename?: 'Tag', id: string, name: string, lastUsedAt: any }> } }> } };
 
 export type GetSparkNodeQueryVariables = Exact<{
   id: Scalars['ID'];
@@ -279,6 +311,13 @@ export type GetTagsQueryVariables = Exact<{
 
 export type GetTagsQuery = { __typename?: 'Query', tags: Array<{ __typename?: 'Tag', id: string, name: string, lastUsedAt: any }> };
 
+export const GenericFolderFragmentDoc = gql`
+    fragment GenericFolder on Folder {
+  id
+  name
+  isRoot
+}
+    `;
 export const GenericTagFragmentDoc = gql`
     fragment GenericTag on Tag {
   id
@@ -297,6 +336,50 @@ export const GenericSparkFragmentDoc = gql`
   updatedAt
 }
     ${GenericTagFragmentDoc}`;
+export const AddFolderEntryDocument = gql`
+    mutation addFolderEntry($input: AddFolderEntryInput!) {
+  addFolderEntry(input: $input) {
+    addedEntry {
+      id
+      entity {
+        ... on Folder {
+          id
+          name
+        }
+        ... on Spark {
+          ...GenericSpark
+        }
+      }
+    }
+  }
+}
+    ${GenericSparkFragmentDoc}`;
+export type AddFolderEntryMutationFn = Apollo.MutationFunction<AddFolderEntryMutation, AddFolderEntryMutationVariables>;
+
+/**
+ * __useAddFolderEntryMutation__
+ *
+ * To run a mutation, you first call `useAddFolderEntryMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useAddFolderEntryMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [addFolderEntryMutation, { data, loading, error }] = useAddFolderEntryMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useAddFolderEntryMutation(baseOptions?: Apollo.MutationHookOptions<AddFolderEntryMutation, AddFolderEntryMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<AddFolderEntryMutation, AddFolderEntryMutationVariables>(AddFolderEntryDocument, options);
+      }
+export type AddFolderEntryMutationHookResult = ReturnType<typeof useAddFolderEntryMutation>;
+export type AddFolderEntryMutationResult = Apollo.MutationResult<AddFolderEntryMutation>;
+export type AddFolderEntryMutationOptions = Apollo.BaseMutationOptions<AddFolderEntryMutation, AddFolderEntryMutationVariables>;
 export const AddTagToSparkDocument = gql`
     mutation addTagToSpark($input: AddTagToSparkInput!) {
   addTagToSpark(input: $input) {
@@ -332,6 +415,47 @@ export function useAddTagToSparkMutation(baseOptions?: Apollo.MutationHookOption
 export type AddTagToSparkMutationHookResult = ReturnType<typeof useAddTagToSparkMutation>;
 export type AddTagToSparkMutationResult = Apollo.MutationResult<AddTagToSparkMutation>;
 export type AddTagToSparkMutationOptions = Apollo.BaseMutationOptions<AddTagToSparkMutation, AddTagToSparkMutationVariables>;
+export const CreateFolderDocument = gql`
+    mutation createFolder($input: CreateFolderInput!) {
+  createFolder(input: $input) {
+    folderEntry {
+      id
+      entity {
+        ... on Folder {
+          id
+          name
+        }
+      }
+    }
+  }
+}
+    `;
+export type CreateFolderMutationFn = Apollo.MutationFunction<CreateFolderMutation, CreateFolderMutationVariables>;
+
+/**
+ * __useCreateFolderMutation__
+ *
+ * To run a mutation, you first call `useCreateFolderMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateFolderMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createFolderMutation, { data, loading, error }] = useCreateFolderMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useCreateFolderMutation(baseOptions?: Apollo.MutationHookOptions<CreateFolderMutation, CreateFolderMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateFolderMutation, CreateFolderMutationVariables>(CreateFolderDocument, options);
+      }
+export type CreateFolderMutationHookResult = ReturnType<typeof useCreateFolderMutation>;
+export type CreateFolderMutationResult = Apollo.MutationResult<CreateFolderMutation>;
+export type CreateFolderMutationOptions = Apollo.BaseMutationOptions<CreateFolderMutation, CreateFolderMutationVariables>;
 export const CreateSparkDocument = gql`
     mutation createSpark($input: SparkCreateInput!) {
   createSpark(input: $input) {
@@ -506,8 +630,7 @@ export type UpdateSparkMutationOptions = Apollo.BaseMutationOptions<UpdateSparkM
 export const GetFoldersDocument = gql`
     query getFolders {
   folderTree {
-    id
-    name
+    ...GenericFolder
     entries {
       id
       entity {
@@ -515,8 +638,7 @@ export const GetFoldersDocument = gql`
           ...GenericSpark
         }
         ... on Folder {
-          id
-          name
+          ...GenericFolder
           entries {
             id
             entity {
@@ -524,8 +646,10 @@ export const GetFoldersDocument = gql`
                 ...GenericSpark
               }
               ... on Folder {
-                id
-                name
+                ...GenericFolder
+                entries {
+                  id
+                }
               }
             }
           }
@@ -534,7 +658,8 @@ export const GetFoldersDocument = gql`
     }
   }
 }
-    ${GenericSparkFragmentDoc}`;
+    ${GenericFolderFragmentDoc}
+${GenericSparkFragmentDoc}`;
 
 /**
  * __useGetFoldersQuery__

@@ -4,7 +4,6 @@ import { GenericTagFragment } from '@operations'
 
 import { SparkEditorStore } from './spark-editor'
 
-
 // https://artsy.github.io/blog/2018/11/21/conditional-types-in-typescript/
 
 export interface SearchTagFilter {
@@ -23,7 +22,6 @@ type SearchFilterEntry = {
 export class GlobalStore  {
   searchFilters: SearchFilterEntry[] = []
   activeEditors: SparkEditorStore[] = []
-
   tagFilters = []
   
   constructor() {
