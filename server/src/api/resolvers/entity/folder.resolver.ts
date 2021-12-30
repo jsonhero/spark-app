@@ -29,8 +29,11 @@ export class FolderResolver {
   @Mutation(() => CreateFolderPayload)
   public async createFolder(
     @Args('input') input: CreateFolderInput
-  ): Promise<FolderEntry> {
-    return this.folderEntryService.createFolderInParent(input.name, fromGlobalId(input.parentFolderId).id)
+  ): Promise<CreateFolderPayload> {
+    const newFolderEntry = await this.folderEntryService.createFolderInParent(input.name, fromGlobalId(input.parentFolderId).id)
+    return {
+      folderEntry: newFolderEntry,
+    };
   }
 
   @ResolveField(() => [FolderEntry])

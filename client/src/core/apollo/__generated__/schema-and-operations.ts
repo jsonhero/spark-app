@@ -247,7 +247,7 @@ export type CreateFolderMutationVariables = Exact<{
 }>;
 
 
-export type CreateFolderMutation = { __typename?: 'Mutation', createFolder: { __typename?: 'CreateFolderPayload', folderEntry: { __typename?: 'FolderEntry', id: string, entity: { __typename?: 'Folder', id: string, name: string } | { __typename?: 'Spark' } } } };
+export type CreateFolderMutation = { __typename?: 'Mutation', createFolder: { __typename?: 'CreateFolderPayload', folderEntry: { __typename?: 'FolderEntry', id: string, entity: { __typename?: 'Folder', id: string, name: string, entries: Array<{ __typename?: 'FolderEntry', id: string }> } | { __typename?: 'Spark' } } } };
 
 export type CreateSparkMutationVariables = Exact<{
   input: SparkCreateInput;
@@ -424,6 +424,9 @@ export const CreateFolderDocument = gql`
         ... on Folder {
           id
           name
+          entries {
+            id
+          }
         }
       }
     }

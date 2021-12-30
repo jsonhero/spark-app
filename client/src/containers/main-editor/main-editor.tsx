@@ -109,7 +109,7 @@ export const MainEditor = observer(() => {
   }
 
   return (
-    <Box width="100%" bg="gray_0" position="relative">
+    <Box width="100%" bg="#FFFFFF" position="relative">
       <Box position="absolute" top="20px" right="150px">
         {isSavingEditor ? 'Saving...'  : ''}
       </Box>

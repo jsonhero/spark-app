@@ -6,6 +6,9 @@ mutation createFolder($input: CreateFolderInput!) {
         ... on Folder {
           id
           name
+          entries {
+            id
+          }
         }
       }
     }

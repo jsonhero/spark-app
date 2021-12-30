@@ -60,13 +60,10 @@ export const SparksSidebarComponent: React.FC<SparksSidebarProps> = ({
   // if (loading) { return null }
 
   return (
-    <Box height="100vh" minWidth="300px" width="300px" bg="#FDFDFD" borderRight="1px solid" borderColor="gray_2">
+    <Box height="100vh" minWidth="300px" width="300px" bg="#FFFDFD" borderRight="1px solid" borderColor="#E3E7EF">
       <Box p="md" borderBottom="1px solid" borderColor="gray_2">
         <Box>
-          <Text fontWeight="bold">All</Text>
-        </Box>
-        <Box mt="sm">
-          <Input size="sm" bg="white" placeholder="Search" />
+          <Input size="sm" bg="white" placeholder="Search" borderRadius="6px"/>
         </Box>
         <Flex justify="flex-start" flexWrap="wrap">
           {globalStore.searchFilters.filter((filter) => filter.type === 'tag').map((filter, i) => {
@@ -77,8 +74,6 @@ export const SparksSidebarComponent: React.FC<SparksSidebarProps> = ({
             )
           })}
         </Flex>
-      </Box>
-      <Box height="20px" bg="gray_1" borderBottom="1px solid" borderColor="gray_2">
       </Box>
       <Box overflow="auto" height="calc(100% - 200px)">
         <VStack
