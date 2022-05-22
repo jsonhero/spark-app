@@ -45,9 +45,9 @@ const MainSidebarComponent: React.FC<MainSidebarProps> = ({ globalStore }) => {
       </Box>
 
       <Box>
-        <SidebarModule title="Workspace">
+        {/* <SidebarModule title="Workspace">
           <FolderTree />
-        </SidebarModule>
+        </SidebarModule> */}
         <SidebarModule title="Tags">
           <Flex justify="flex-start" flexWrap="wrap">
             {data?.tags.map((tag, i) => <Box key={i} mr="xsm" mt="xsm" onClick={() => onTagClick(tag)}><Tag name={tag.name} closeable={false} /></Box>)}
