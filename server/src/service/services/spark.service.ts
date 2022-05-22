@@ -1,70 +1,61 @@
 import { Injectable } from '@nestjs/common';
-import { Repository, In, FindManyOptions } from 'typeorm';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
 
 import { DbConnection } from '../../db';
-import { Spark } from '../../entity';
+
+import { Spark, SparkDocument, SparkSchema } from '@schema';
 import { SparkCreateInput } from '../../api/graph';
 
 @Injectable()
 export class SparkService {
-  constructor(private connection: DbConnection) {}
+  model: Model<Spark>;
 
-  private get repository(): Repository<Spark> {
-    return this.connection.getRepository(Spark);
+  constructor(private connection: DbConnection) {
+    this.model = this.connection.getModel(Spark.name, SparkSchema);
   }
 
+  // https://stackoverflow.com/questions/46391630/mongoosejs-filter-out-populate-results
   async findAll(tags: string[]): Promise<Spark[]> {
-    let query = this.repository
-      .createQueryBuilder('spark')
-      .leftJoinAndSelect('spark.tags', 'tag')
-      .orderBy('spark.updated_at', 'DESC');
+    const sparks = this.model
+      .find()
+      .populate('tags')
+      .sort({ updatedAt: 'desc' });
 
-    if (tags != null) {
-      query = query.where('tag.name IN (:...tags)', {
-        tags,
-      });
-    }
-
-    const sparks = await query.getMany();
+    // if (tags != null) {
+    //   query = query.where('tag.name IN (:...tags)', {
+    //     tags,
+    //   });
+    // }
 
     return sparks;
   }
 
   async create(input: SparkCreateInput): Promise<Spark> {
-    const spark = this.repository.create({
-      doc: input.doc,
+    const spark = new this.model({
+      document: input.doc,
     });
 
-    return await this.repository.save(spark);
+    return await spark.save();
   }
 
   async update(id: string, doc: string): Promise<Spark> {
-    const spark = await this.repository.findOne({
-      where: { id },
-    });
+    const spark = await this.model.findById(id);
 
-    await this.repository.save({
-      ...spark,
-      doc,
-    });
+    spark.set('document', doc);
+
+    await spark.save();
 
     return this.findById(id);
   }
 
   async delete(id: string) {
-    return this.repository.delete({
+    return this.model.findOneAndDelete({
       id,
     });
   }
 
   async findById(id: string) {
-    return this.repository.findOne(
-      {
-        id,
-      },
-      {
-        relations: ['tags'],
-      },
-    );
+    return this.model.findById(id).populate('tags');
   }
 }

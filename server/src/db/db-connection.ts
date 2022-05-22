@@ -1,7 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { InjectConnection } from '@nestjs/typeorm';
-import { Repository, Connection, EntitySchema, ObjectType } from 'typeorm';
+import { InjectConnection } from '@nestjs/mongoose';
 // https://github.com/vendure-ecommerce/vendure/blob/master/packages/core/src/api/common/request-context.ts
+import { Connection, Schema, Model } from 'mongoose';
+
 @Injectable()
 export class DbConnection {
   constructor(@InjectConnection() private connection: Connection) {}
@@ -22,13 +23,8 @@ export class DbConnection {
    * be aware of any existing transaction. Therefore calling this method without supplying a RequestContext
    * is discouraged without a deliberate reason.
    */
-  getRepository<Entity>(
-    target: ObjectType<Entity> | EntitySchema<Entity> | string,
-  ): Repository<Entity>;
 
-  getRepository<Entity>(
-    target: ObjectType<Entity> | EntitySchema<Entity> | string,
-  ): Repository<Entity> {
-    return this.connection.getRepository(target);
+  getModel<Doc>(name: string, schema: Schema<Doc>): Model<Doc> {
+    return this.connection.model(name, schema);
   }
 }

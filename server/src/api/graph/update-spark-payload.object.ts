@@ -1,5 +1,5 @@
 import { ObjectType, Field } from '@nestjs/graphql';
-import { Spark } from '@entity';
+import { Spark } from '@schema';
 
 @ObjectType()
 export class UpdateSparkPayload {

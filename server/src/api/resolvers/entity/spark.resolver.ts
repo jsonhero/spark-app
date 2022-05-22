@@ -9,7 +9,7 @@ import {
 } from '@nestjs/graphql';
 
 import { SparkService } from '@service';
-import { Spark, Tag } from '@entity';
+import { Spark, Tag } from '@schema';
 import {
   SparkCreateInput,
   DeleteSparkPayload,

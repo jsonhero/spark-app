@@ -1,8 +1,8 @@
 import * as path from 'path';
 
 import { Module } from '@nestjs/common';
-import { TypeOrmModule } from '@nestjs/typeorm';
 import { GraphQLModule } from '@nestjs/graphql';
+import { MongooseModule } from '@nestjs/mongoose';
 
 import { DbModule } from './db';
 import { ServiceModule } from './service';
@@ -10,7 +10,7 @@ import { ApiModule } from './api';
 
 @Module({
   imports: [
-    TypeOrmModule.forRoot(),
+    MongooseModule.forRoot('mongodb://localhost/junto'),
     DbModule,
     ServiceModule,
     ApiModule,

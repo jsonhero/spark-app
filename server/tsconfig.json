@@ -22,8 +22,8 @@
       "@graph/*": ["src/api/graph/*"],
       "@entity": ["src/entity/"],
       "@service": ["src/service/"],
-      "@resolvers": ["src/api/resolvers"]
-
+      "@resolvers": ["src/api/resolvers"],
+      "@schema": ["src/schema/"],
     }
   }
 }

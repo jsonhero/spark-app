@@ -4,7 +4,7 @@ import { Inject, forwardRef } from '@nestjs/common';
 
 import { ResolvedGlobalId, fromGlobalId } from '@graph/utils';
 import { Node } from '../../graph';
-import { Spark } from '../../../entity';
+import { Spark } from '@schema';
 import { SparkService } from '@service';
 
 @Resolver('Node')
@@ -36,7 +36,7 @@ export class NodeResolver {
     @Args({ name: 'id', type: () => ID }) id: string,
   ): Promise<Node> | null {
     const resolvedGlobalId = fromGlobalId(id);
-    if (!isUUID(resolvedGlobalId.id)) {
+    if (!resolvedGlobalId.id) {
       throw new Error('Invalid ID.');
     }
 

@@ -1,8 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { Repository, ILike, FindManyOptions, Raw } from 'typeorm';
+
+import { Model } from 'mongoose';
+import { Tag, TagSchema, Spark, SparkSchema } from '@schema';
 
 import { DbConnection } from '../../db';
-import { Spark, Tag, Spark_X_Tag } from '@entity';
 import {
   CreateTagInput,
   AddTagToSparkInput,
@@ -12,97 +13,96 @@ import { SparkService } from './spark.service';
 
 @Injectable()
 export class TagService {
+  model: Model<Tag>;
+  sparkModel: Model<Spark>;
+
   constructor(
     private connection: DbConnection,
     private sparkService: SparkService,
-  ) {}
-
-  private get repository(): Repository<Tag> {
-    return this.connection.getRepository(Tag);
+  ) {
+    this.model = this.connection.getModel(Tag.name, TagSchema);
+    this.sparkModel = this.connection.getModel(Spark.name, SparkSchema);
   }
 
   findAll({ query = null }: { query?: string }): Promise<Tag[]> {
-    let options: FindManyOptions<Tag> = {
-      order: {
-        lastUsedAt: 'DESC',
-      },
-    };
+    // let options: FindManyOptions<Tag> = {
+    //   order: {
+    //     lastUsedAt: 'DESC',
+    //   },
+    // };
 
-    if (query) {
-      options = {
-        where: {
-          name: ILike(`%${query}%`),
+    // if (query) {
+    //   options = {
+    //     where: {
+    //       name: ILike(`%${query}%`),
+    //     },
+    //     ...options,
+    //   };
+    // }
+
+    return this.model
+      .aggregate()
+      .search({
+        text: {
+          query,
         },
-        ...options,
-      };
-    }
+      })
+      .exec();
 
-    return this.repository.find(options);
+    // return this.repository.find(options);
   }
 
   async create(input: CreateTagInput) {
-    const tagToCreate = this.repository.create({
+    const tagToCreate = new this.model({
       name: input.name,
+      sparks: [input.sparkId],
     });
 
-    const tag = await this.repository.save(tagToCreate);
+    const tag = await tagToCreate.save();
 
-    await this.repository
-      .createQueryBuilder()
-      .insert()
-      .into(Spark_X_Tag)
-      .values({
-        spark_id: input.sparkId,
-        tag_id: tag.id,
-      })
-      .execute();
+    await this.sparkModel.findByIdAndUpdate(input.sparkId, {
+      $push: {
+        tags: tag.id,
+      },
+    });
 
     return tag;
   }
 
   async addTagToSpark(input: AddTagToSparkInput) {
-    const tagToReceiveSpark = await this.repository.findOne(input.tagId);
+    const tagWithSpark = await this.model.findByIdAndUpdate(input.tagId, {
+      $push: {
+        sparks: input.sparkId,
+      },
+      $set: {
+        lastUsedAt: Date.now(),
+      },
+    });
 
-    await this.repository
-      .createQueryBuilder()
-      .insert()
-      .into(Spark_X_Tag)
-      .values({
-        spark_id: input.sparkId,
-        tag_id: input.tagId,
-      })
-      .execute();
+    await this.sparkModel.findByIdAndUpdate(input.sparkId, {
+      $push: {
+        tags: input.tagId,
+      },
+    });
 
-    await this.repository.createQueryBuilder()
-      .update()
-      .set({ lastUsedAt: () => 'now()' })
-      .where('id = :id', { id: input.tagId })
-      .execute();
-
-    return tagToReceiveSpark;
+    return tagWithSpark;
   }
 
   async deleteTagFromSpark(input: DeleteTagFromSparkInput) {
-    await this.repository
-      .createQueryBuilder()
-      .delete()
-      .from(Spark_X_Tag)
-      .where('spark_id = :sparkId', { sparkId: input.sparkId })
-      .andWhere('tag_id = :tagId', { tagId: input.tagId })
-      .execute();
+    const updatedTag = await this.model.findByIdAndUpdate(input.tagId, {
+      $pullAll: {
+        sparks: input.sparkId,
+      },
+    });
 
-    // Remove tag altogether if it's the last
-    const count = await this.connection.rawConnection
-      .createQueryBuilder()
-      .from(Spark_X_Tag, 'spark_x_tag')
-      .where('tag_id = :tagId', { tagId: input.tagId })
-      .distinct()
-      .getCount();
-
-    if (count === 0) {
-      await this.repository.delete({
-        id: input.tagId,
-      });
+    if (updatedTag.sparks.length) {
+      await this.model.findByIdAndDelete(updatedTag.id);
     }
+
+    await this.sparkModel.findByIdAndUpdate(input.sparkId, {
+      $pullAll: {
+        tags: input.tagId,
+      },
+    });
   }
 }
