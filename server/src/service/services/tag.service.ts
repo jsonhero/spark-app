@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
-
+import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { Tag, TagSchema, Spark, SparkSchema } from '@schema';
+import { Tag, Spark } from '@schema';
 
 import { DbConnection } from '../../db';
 import {
@@ -13,16 +13,12 @@ import { SparkService } from './spark.service';
 
 @Injectable()
 export class TagService {
-  model: Model<Tag>;
-  sparkModel: Model<Spark>;
-
   constructor(
     private connection: DbConnection,
     private sparkService: SparkService,
-  ) {
-    this.model = this.connection.getModel(Tag.name, TagSchema);
-    this.sparkModel = this.connection.getModel(Spark.name, SparkSchema);
-  }
+    @InjectModel(Tag.name) private readonly model: Model<Tag>,
+    @InjectModel(Spark.name) private readonly sparkModel: Model<Spark>,
+  ) {}
 
   findAll({ query = null }: { query?: string }): Promise<Tag[]> {
     // let options: FindManyOptions<Tag> = {
@@ -62,7 +58,7 @@ export class TagService {
 
     await this.sparkModel.findByIdAndUpdate(input.sparkId, {
       $push: {
-        tags: tag.id,
+        'reference.tags': tag.id,
       },
     });
 
@@ -81,7 +77,7 @@ export class TagService {
 
     await this.sparkModel.findByIdAndUpdate(input.sparkId, {
       $push: {
-        tags: input.tagId,
+        'reference.tags': input.tagId,
       },
     });
 
@@ -101,7 +97,7 @@ export class TagService {
 
     await this.sparkModel.findByIdAndUpdate(input.sparkId, {
       $pullAll: {
-        tags: input.tagId,
+        'reference.tags': input.tagId,
       },
     });
   }

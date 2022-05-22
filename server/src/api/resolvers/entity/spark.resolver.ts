@@ -14,6 +14,7 @@ import {
   SparkCreateInput,
   DeleteSparkPayload,
   UpdateSparkPayload,
+  SparkContentUnion
 } from '../../graph';
 import { toGlobalId, fromGlobalId } from '@graph/utils';
 
@@ -63,8 +64,13 @@ export class SparkResolver {
     return toGlobalId(Spark.name, spark.id);
   }
 
-  @ResolveField()
-  tags(@Parent() spark: Spark): Tag[] {
-    return spark.tags || [];
+  // @ResolveField()
+  // tags(@Parent() spark: Spark): Tag[] {
+  //   return spark.tags || [];
+  // }
+
+  @ResolveField(() => SparkContentUnion)
+  content(@Parent() spark: Spark): typeof SparkContentUnion {
+    return spark.content;
   }
 }

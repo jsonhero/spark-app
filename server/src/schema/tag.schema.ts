@@ -5,8 +5,6 @@ import { Field, ID, ObjectType } from '@nestjs/graphql';
 import { Node } from '../api/graph';
 import { Spark } from './spark.schema';
 
-export type TagDocument = Tag & mongoose.Document;
-
 @ObjectType({
   implements: Node,
 })

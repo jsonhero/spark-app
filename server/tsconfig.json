@@ -24,6 +24,7 @@
       "@service": ["src/service/"],
       "@resolvers": ["src/api/resolvers"],
       "@schema": ["src/schema/"],
+      "@type": ["src/type/"]
     }
   }
 }

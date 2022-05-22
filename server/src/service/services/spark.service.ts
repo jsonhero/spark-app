@@ -2,24 +2,21 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 
-import { DbConnection } from '../../db';
-
-import { Spark, SparkDocument, SparkSchema } from '@schema';
+import { SparkNote, Spark } from '@schema';
 import { SparkCreateInput } from '../../api/graph';
 
 @Injectable()
 export class SparkService {
-  model: Model<Spark>;
-
-  constructor(private connection: DbConnection) {
-    this.model = this.connection.getModel(Spark.name, SparkSchema);
-  }
+  constructor(
+    @InjectModel(Spark.name) private readonly model: Model<Spark>,
+    @InjectModel(SparkNote.name) private readonly sparkNoteModel: Model<SparkNote>,
+  ) {}
 
   // https://stackoverflow.com/questions/46391630/mongoosejs-filter-out-populate-results
   async findAll(tags: string[]): Promise<Spark[]> {
     const sparks = this.model
       .find()
-      .populate('tags')
+      .populate('reference.tags')
       .sort({ updatedAt: 'desc' });
 
     // if (tags != null) {
@@ -32,8 +29,10 @@ export class SparkService {
   }
 
   async create(input: SparkCreateInput): Promise<Spark> {
-    const spark = new this.model({
-      document: input.doc,
+    const spark = new this.sparkNoteModel({
+      content: {
+        document: input.doc,
+      },
     });
 
     return await spark.save();
@@ -56,6 +55,6 @@ export class SparkService {
   }
 
   async findById(id: string) {
-    return this.model.findById(id).populate('tags');
+    return this.model.findById(id).populate('reference.tags');
   }
 }

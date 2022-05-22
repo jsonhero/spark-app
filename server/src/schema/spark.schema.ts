@@ -1,26 +1,39 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import * as mongoose from 'mongoose';
 import { Field, ID, ObjectType } from '@nestjs/graphql';
-import { GraphQLJSONObject } from 'graphql-type-json';
 
-import { Node } from '../api/graph';
+import { Node, SparkContentUnion } from '../api/graph';
 import { Tag } from './tag.schema';
+import { SparkKind } from '@type';
 
-export type SparkDocument = Spark & mongoose.Document;
+@ObjectType()
+@Schema()
+class SparkReference {
+  @Field(() => [Tag])
+  @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Tag' }] })
+  tags: Tag[];
+}
+
+const SparkReferenceSchema = SchemaFactory.createForClass(SparkReference);
 
 @ObjectType({
   implements: Node,
 })
 @Schema({
   timestamps: true,
+  discriminatorKey: 'kind',
 })
 export class Spark implements Node {
   @Field(() => ID)
   id: string;
 
-  @Field(() => GraphQLJSONObject, { nullable: true })
-  @Prop({ required: true, type: mongoose.Schema.Types.Mixed })
-  document: any;
+  @Field(() => SparkKind)
+  @Prop({
+    type: String,
+    required: true,
+    enum: [SparkKind.NOTE, SparkKind.DATABASE],
+  })
+  kind: SparkKind;
 
   @Field()
   @Prop()
@@ -30,13 +43,12 @@ export class Spark implements Node {
   @Prop()
   updatedAt: Date;
 
-  @Field(() => [Tag])
-  @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Tag' }] })
-  tags: Tag[];
+  @Field(() => SparkReference)
+  @Prop({ type: SparkReferenceSchema, required: true, default: {} })
+  reference: SparkReference;
 
-  // @Field(() => [Spark])
-  // @Prop({ type: mongoose.Schema.Types.ObjectId, ref: Spark.name })
-  // relatedSparks: Spark[];
+  @Field(() => SparkContentUnion)
+  content: typeof SparkContentUnion;
 }
 
 export const SparkSchema = SchemaFactory.createForClass(Spark);
